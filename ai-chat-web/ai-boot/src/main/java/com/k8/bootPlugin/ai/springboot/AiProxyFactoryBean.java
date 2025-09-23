@@ -1,10 +1,9 @@
 package com.k8.bootPlugin.ai.springboot;
 
-import com.k8.bootPlugin.ai.AiContext;
+import com.k8.bootPlugin.ai.message.AiContext;
 import com.k8.bootPlugin.ai.AiMethodInterceptorBuilder;
 import com.k8.bootPlugin.ai.AiProxyStarter;
-import com.k8.bootPlugin.ai.ChatMemoryStore;
-import com.k8.bootPlugin.ai.impl.DefaultAiMethodContextBuilder;
+import com.k8.bootPlugin.ai.store.ChatMemoryStore;
 import com.k8.bootPlugin.proxy.ProxyFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;

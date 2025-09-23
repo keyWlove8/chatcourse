@@ -172,11 +172,6 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus-spring-boot3.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-jsqlparser</artifactId>
-            <version>${mybatis-plus-spring-boot3.version}</version>
-        </dependency>
         
         <!-- MySQL驱动 -->
         <dependency>

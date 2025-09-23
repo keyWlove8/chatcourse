@@ -1,4 +1,4 @@
-package com.k8.bootPlugin.ai;
+package com.k8.bootPlugin.ai.message;
 
 /**
  * @Author: k8

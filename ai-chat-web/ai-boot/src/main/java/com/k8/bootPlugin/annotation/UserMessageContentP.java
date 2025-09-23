@@ -10,8 +10,8 @@ import java.lang.annotation.Target;
  * @CreateTime: 2025-09-22
  * @Version: 1.0
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SystemMessage {
-    String value();
+public @interface UserMessageContentP {
+    String type();
 }

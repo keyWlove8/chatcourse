@@ -1,5 +1,7 @@
 package com.k8.bootPlugin.ai;
 
+import com.k8.bootPlugin.ai.message.AiContext;
+import com.k8.bootPlugin.ai.store.ChatMemoryStore;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

@@ -1,4 +1,7 @@
-package com.k8.bootPlugin.ai;
+package com.k8.bootPlugin.ai.context.builder;
+
+import com.k8.bootPlugin.ai.AiMethodContext;
+import com.k8.bootPlugin.ai.message.AiContext;
 
 import java.lang.reflect.Method;
 

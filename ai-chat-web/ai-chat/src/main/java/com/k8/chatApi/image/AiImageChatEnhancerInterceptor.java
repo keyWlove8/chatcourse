@@ -3,7 +3,7 @@ package com.k8.chatApi.image;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
 import com.k8.bootPlugin.ai.AbstractAiMethodInterceptor;
-import com.k8.bootPlugin.ai.AiContext;
+import com.k8.bootPlugin.ai.message.AiContext;
 import com.k8.bootPlugin.ai.AiMethodContext;
 import com.k8.bootPlugin.ai.AiProxyStarter;
 

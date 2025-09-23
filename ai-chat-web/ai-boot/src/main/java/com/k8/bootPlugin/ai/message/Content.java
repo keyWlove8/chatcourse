@@ -1,4 +1,4 @@
-package com.k8.bootPlugin.ai;
+package com.k8.bootPlugin.ai.message;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

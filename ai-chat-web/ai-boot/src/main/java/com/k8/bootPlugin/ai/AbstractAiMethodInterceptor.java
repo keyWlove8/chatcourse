@@ -1,6 +1,8 @@
 package com.k8.bootPlugin.ai;
 
-import com.k8.bootPlugin.ai.impl.DefaultAiMethodContextBuilder;
+import com.k8.bootPlugin.ai.context.builder.AiMethodContextBuilder;
+import com.k8.bootPlugin.ai.context.builder.DefaultAiMethodContextBuilder;
+import com.k8.bootPlugin.ai.message.*;
 import com.k8.bootPlugin.annotation.SystemMessage;
 import com.k8.bootPlugin.proxy.AopUtil;
 import com.k8.bootPlugin.proxy.MethodInterceptor;
@@ -100,20 +102,14 @@ public abstract class AbstractAiMethodInterceptor implements MethodInterceptor {
             }
         }
         AiMethodContext aiMethodContext = methodContextMap.get(key);
-        aiMethodContext.setArgs(args);
-        try {
-            //所以这里必须检测是否返回值是String的
-            Object result = doProcess(aiMethodContext);
-            if (!(result instanceof String)) throw new IllegalStateException("返回值应当为String");
-            ChatMemoryStore chatMemoryStore = aiProxyStarter.getChatMemoryStore();
-            String memoryId = aiMethodContext.getMemoryId();
-            chatMemoryStore.addMessage(new FullMessage(MessageRole.assistant, List.of(new Content("text", result.toString()))), memoryId);
-            //如果成功执行，则将本次会话记忆化
-            aiMethodContext.memory(result);
-            return result;
-        } finally {
-            aiMethodContext.clear();
-        }
+        MessageSession messageSession = aiMethodContext.refreshArgs(args);
+        //所以这里必须检测是否返回值是String的
+        Object result = doProcess(aiMethodContext);
+        if (!(result instanceof String)) throw new IllegalStateException("返回值应当为String");
+        messageSession.setAiMessage(new FullMessage(MessageRole.assistant, List.of(new Content("text", result.toString()))));
+        //如果成功执行，则将本次会话记忆化
+        aiMethodContext.memory();
+        return result;
     }
 
     public abstract Object doProcess(AiMethodContext aiMethodContext);

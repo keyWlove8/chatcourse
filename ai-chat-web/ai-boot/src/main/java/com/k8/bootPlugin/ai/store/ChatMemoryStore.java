@@ -1,4 +1,6 @@
-package com.k8.bootPlugin.ai;
+package com.k8.bootPlugin.ai.store;
+
+import com.k8.bootPlugin.ai.message.FullMessage;
 
 import java.util.List;
 
@@ -13,4 +15,6 @@ public interface ChatMemoryStore {
     void addAllMessage(List<FullMessage> fullMessages, String memoryId);
 
     List<FullMessage> getMemoryFullMessages(String memoryId);
+
+    int getMemorySize();
 }

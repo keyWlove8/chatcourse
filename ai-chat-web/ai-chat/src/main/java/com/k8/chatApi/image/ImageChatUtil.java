@@ -8,9 +8,9 @@ import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.exception.UploadFileException;
 import com.k8.bootPlugin.ai.AiMethodContext;
-import com.k8.bootPlugin.ai.Content;
-import com.k8.bootPlugin.ai.FullMessage;
-import com.k8.bootPlugin.ai.MessageRole;
+import com.k8.bootPlugin.ai.message.Content;
+import com.k8.bootPlugin.ai.message.FullMessage;
+import com.k8.bootPlugin.ai.message.MessageRole;
 
 
 import java.io.IOException;

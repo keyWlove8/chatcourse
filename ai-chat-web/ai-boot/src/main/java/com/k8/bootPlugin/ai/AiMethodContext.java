@@ -1,9 +1,15 @@
 package com.k8.bootPlugin.ai;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.k8.bootPlugin.ai.message.Content;
+import com.k8.bootPlugin.ai.message.FullMessage;
+import com.k8.bootPlugin.ai.message.MessageRole;
+import com.k8.bootPlugin.ai.message.MessageSession;
+import com.k8.bootPlugin.ai.message.dymic.ExpressionUtil;
+import com.k8.bootPlugin.ai.message.dymic.ParsedExpression;
+import com.k8.bootPlugin.ai.store.ChatMemoryStore;
+import org.springframework.util.CollectionUtils;
+
+import java.util.*;
 
 /**
  * @Author: k8
@@ -14,74 +20,101 @@ import java.util.Map;
 public class AiMethodContext {
     private String apiKey;
     private String modelName;
-    private FullMessage systemMessage;
+    private ParsedExpression sourceSystemMessage;
+    private static ThreadLocal<MessageSession> SESSION_LOCAL = new ThreadLocal<>();
     /**
      * key = type
      * value = index
      */
-    private Map<String,Integer> messageMapping;
-    private static  ThreadLocal<FullMessage> localUserMessages = new ThreadLocal<>();
+    private Map<String, Integer> messageMapping;
     private ChatMemoryStore chatMemoryStore;
     private boolean useMemory = false;
     private int memoryIdIndex;
-    private String memoryId;
+    private Map<String, Integer> systemVMapping;
 
-    public AiMethodContext addMessage(String type, Integer argsIndex){
-        if (messageMapping == null){
+    public void addUserContentMapping(String type, Integer argsIndex) {
+        if (messageMapping == null) {
             messageMapping = new HashMap<>();
         }
-        messageMapping.put(type,argsIndex);
-        return this;
-    }
-    public int messageSize(){
-        return messageMapping == null ? 0 : messageMapping.size();
+        messageMapping.put(type, argsIndex);
     }
 
-    public List<FullMessage> getFullMessages(){
-        List<FullMessage> result = new LinkedList<>();
-        result.add(systemMessage);
+    public void addSystemVMapping(String name, Integer argsIndex) {
+        if (systemVMapping == null) {
+            systemVMapping = new HashMap<>();
+        }
+        systemVMapping.put(name, argsIndex);
+    }
+
+    public List<FullMessage> getFullMessages() {
+        MessageSession messageSession = SESSION_LOCAL.get();
+        String memoryId = messageSession.getMemoryId();
         List<FullMessage> memoryMessages = chatMemoryStore.getMemoryFullMessages(memoryId);
-        result.addAll(memoryMessages);
-        result.add(localUserMessages.get());
+        if (CollectionUtils.isEmpty(memoryMessages)) {
+            memoryMessages = Collections.emptyList();
+        }
+        List<FullMessage> result = new LinkedList<>(memoryMessages);
+        if (result.isEmpty() || messageSession.isCanRefreshSystemMessage()){
+            result.add(messageSession.getSystemMessage());
+        }
+        result.add(messageSession.getUserMessage());
         return result;
     }
 
-    public void clear(){
-        localUserMessages.remove();
-    }
 
     /**
      * 这里其实可以不clear，因为这是static修饰的，只有实例级别的需要强制清除避免oom
+     *
      * @param args
      */
-    public void setArgs(Object[] args) {
+    public MessageSession refreshArgs(Object[] args) {
         List<Content> contents = new LinkedList<>();
-        messageMapping.forEach((type,index)->{
+        messageMapping.forEach((type, index) -> {
             Object value = args[index];
-            if (!(value == null || !value.getClass().equals(String.class) || value.toString().isEmpty())){
-                contents.add(new Content(type,value.toString()));
+            if (!(value == null || !value.getClass().equals(String.class) || value.toString().isEmpty())) {
+                contents.add(new Content(type, value.toString()));
             }
         });
-        FullMessage fullMessage = new FullMessage(MessageRole.user,contents);
-        localUserMessages.set(fullMessage);
-        this.memoryId = args[memoryIdIndex].toString();
+        MessageSession session = new MessageSession();
+        FullMessage fullUserMessage = new FullMessage(MessageRole.user, contents);
+        session.setUserMessage(fullUserMessage);
+        String memoryId = String.valueOf(args[memoryIdIndex]);
+        session.setMemoryId(memoryId);
+        String systemMessage = null;
+        if (sourceSystemMessage.canReplace()) {
+            List<String> parameters = sourceSystemMessage.getParameters();
+            Map<String, String> map = new HashMap<>();
+            for (String name : parameters) {
+                String replaceValue = "";
+                if (systemVMapping.containsKey(name)) {
+                    replaceValue = String.valueOf(args[systemVMapping.get(name)]);
+                }
+                map.put(name, replaceValue);
+            }
+            systemMessage  = ExpressionUtil.getValue(sourceSystemMessage, map);
+        }else {
+            systemMessage = sourceSystemMessage.getOriginalString();
+        }
+        FullMessage fullSystemMessage = new FullMessage(MessageRole.system, List.of(new Content("text", systemMessage)));
+        session.setSystemMessage(fullSystemMessage);
+        //todo 禁止刷新SystemMessage,这里可以用一个threadLocal缓存一下，但是在初始化的时候应该查询缓存一下
+        session.setCanRefreshSystemMessage(false);
+        SESSION_LOCAL.set(session);
+        return session;
     }
 
-    public void memory(Object result) {
+    public void memory() {
         if (!useMemory || chatMemoryStore == null) return;
-        String assistMessage = result.toString();
-        FullMessage assistFullMessage = new FullMessage(MessageRole.assistant,List.of(new Content("text",assistMessage)));
-        FullMessage userFullMessages = localUserMessages.get();
-        chatMemoryStore.addAllMessage(List.of(userFullMessages,assistFullMessage),memoryId);
+        MessageSession messageSession = SESSION_LOCAL.get();
+        List<FullMessage> messages = new LinkedList<>();
+        if (chatMemoryStore.getMemorySize() == 0 || messageSession.isCanRefreshSystemMessage()){
+            messages.add(messageSession.getSystemMessage());
+        }
+        messages.add(messageSession.getUserMessage());
+        messages.add(messageSession.getAiMessage());
+        chatMemoryStore.addAllMessage(messages, messageSession.getMemoryId());
     }
-    public AiMethodContext setSystemMessage(List<String> systemMessages){
-        List<Content> contents = systemMessages.stream()
-                .map(message -> {
-                    return new Content("text", message);
-                }).toList();
-        this.systemMessage = new FullMessage(MessageRole.system,contents);
-        return this;
-    }
+
 
     public AiMethodContext setMemoryIdIndex(int memoryIdIndex) {
         this.memoryIdIndex = memoryIdIndex;
@@ -99,6 +132,10 @@ public class AiMethodContext {
         return this;
     }
 
+    public AiMethodContext setSourceSystemMessage(String sourceSystemMessage) {
+        this.sourceSystemMessage = ExpressionUtil.parse(sourceSystemMessage);
+        return this;
+    }
 
     public void setChatMemoryStore(ChatMemoryStore chatMemoryStore) {
         this.chatMemoryStore = chatMemoryStore;
@@ -111,8 +148,7 @@ public class AiMethodContext {
     public String getModelName() {
         return modelName;
     }
-
-    public String getMemoryId() {
-        return memoryId;
+    public void clear(){
+        SESSION_LOCAL.remove();
     }
 }

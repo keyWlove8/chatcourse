@@ -1,7 +1,6 @@
-package com.k8.bootPlugin.ai.impl;
+package com.k8.bootPlugin.ai.store;
 
-import com.k8.bootPlugin.ai.ChatMemoryStore;
-import com.k8.bootPlugin.ai.FullMessage;
+import com.k8.bootPlugin.ai.message.FullMessage;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,5 +35,10 @@ public class LocalChatMemoryStore implements ChatMemoryStore {
     public List<FullMessage> getMemoryFullMessages(String memoryId) {
         List<FullMessage> fullMessages = cache.get(memoryId);
         return fullMessages == null ? Collections.emptyList() : fullMessages;
+    }
+
+    @Override
+    public int getMemorySize() {
+        return cache.size();
     }
 }

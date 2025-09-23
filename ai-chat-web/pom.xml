@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.6</version>
+    </parent>
+
+    <groupId>com.k8</groupId>
+    <artifactId>ai-web</artifactId>
+    <version>1.2</version>
+    <packaging>pom</packaging>
+    <name>ai-web</name>
+
+    <modules>
+        <module>ai-chat</module>
+        <module>ai-static</module>
+        <module>ai-boot</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- 框架版本 -->
+        <spring-boot.version>3.2.6</spring-boot.version>
+        <spring-security.version>6.2.6</spring-security.version>
+
+        <!-- 库版本 -->
+        <lombok.version>1.18.30</lombok.version>
+        <langchain4j.version>0.35.0</langchain4j.version>
+        <langchain4j.boot.version>0.35.0</langchain4j.boot.version>
+        <hutool.version>5.8.25</hutool.version>
+        <cglib.version>3.3.0</cglib.version>
+        <guava.version>33.4.8-jre</guava.version>
+        <jackson.version>2.15.4</jackson.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <validation-api.version>3.0.2</validation-api.version>
+        <pinecone-client.version>5.0.0</pinecone-client.version>
+        <javassist.version>3.30.2-GA</javassist.version>
+        <pdfbox.version>2.0.32</pdfbox.version>
+        <poi-ooxml.version>5.2.4</poi-ooxml.version>
+        <commonmark.version>0.21.0</commonmark.version>
+        <commons-csv.version>1.10.0</commons-csv.version>
+        <hanlp.version>portable-1.8.4</hanlp.version>
+        <mybatis-plus-spring-boot3.version>3.5.6</mybatis-plus-spring-boot3.version>
+        <dashscope-sdk.version>2.20.8</dashscope-sdk.version>
+        <okhttp.version>4.12.0</okhttp.version>
+        <reflections.version>0.10.2</reflections.version>
+        <tomcat.version>10.1.11</tomcat.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Boot 相关依赖 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-webflux</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-redis</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <!-- Spring Security 相关 -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>${spring-security.version}</version>
+            </dependency>
+            <!--<dependency>
+                            <groupId>dev.langchain4j</groupId>
+                            <artifactId>langchain4j-ollama-spring-boot-starter</artifactId>
+                            <version>${langchain4j.version}</version>
+                        </dependency>-->
+            <!-- LangChain4j 相关依赖 -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-core</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-spring-boot-starter</artifactId>
+                <version>${langchain4j.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-easy-rag</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-pinecone</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-reactor</artifactId>
+                <version>${langchain4j.version}</version>
+            </dependency>
+
+
+            <!-- 工具类库 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections.version}</version>
+            </dependency>
+
+            <!-- JSON 处理 -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <!-- HTTP 客户端 -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+
+            <!-- 文档解析 -->
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi-ooxml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.commonmark</groupId>
+                <artifactId>commonmark</artifactId>
+                <version>${commonmark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-csv</artifactId>
+                <version>${commons-csv.version}</version>
+            </dependency>
+
+            <!-- 自然语言处理 -->
+            <dependency>
+                <groupId>com.hankcs</groupId>
+                <artifactId>hanlp</artifactId>
+                <version>${hanlp.version}</version>
+            </dependency>
+
+            <!-- 阿里云服务 -->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dashscope-sdk-java</artifactId>
+                <version>${dashscope-sdk.version}</version>
+            </dependency>
+
+            <!-- 向量数据库 -->
+            <dependency>
+                <groupId>io.pinecone</groupId>
+                <artifactId>pinecone-client</artifactId>
+                <version>${pinecone-client.version}</version>
+            </dependency>
+
+            <!-- 安全相关 -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- 验证框架 -->
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${validation-api.version}</version>
+            </dependency>
+
+            <!-- Tomcat 版本管理 - 解决Java 21兼容性问题 -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            
+            <dependency>
+                <groupId>com.key.w8</groupId>
+                <artifactId>K8-Remoting-core</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

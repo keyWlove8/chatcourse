@@ -1,0 +1,16 @@
+package com.k8.bootPlugin.ai;
+
+import java.util.List;
+
+/**
+ * @Author: k8
+ * @CreateTime: 2025-09-22
+ * @Version: 1.0
+ */
+public interface ChatMemoryStore {
+    void addMessage(FullMessage message, String memoryId);
+
+    void addAllMessage(List<FullMessage> fullMessages, String memoryId);
+
+    List<FullMessage> getMemoryFullMessages(String memoryId);
+}

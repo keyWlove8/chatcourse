@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.k8.mapper.KnowledgeMapper">
+
+    <insert id="addKnowledge" parameterType="com.k8.entity.KnowledgeInfo">
+        INSERT INTO knowledge_info (id, name, create_time, creator_id) 
+        VALUES (#{knowledgeInfo.id}, #{knowledgeInfo.name}, #{knowledgeInfo.createTime}, #{knowledgeInfo.creatorId})
+    </insert>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(*) FROM knowledge_info
+    </select>
+
+    <select id="list" resultType="com.k8.entity.KnowledgeInfo">
+        SELECT * FROM knowledge_info ORDER BY create_time DESC
+    </select>
+
+    <delete id="deleteById" parameterType="string">
+        DELETE FROM knowledge_info WHERE id = #{knowledgeId}
+    </delete>
+
+    <select id="selectById" parameterType="string" resultType="com.k8.entity.KnowledgeInfo">
+        SELECT * FROM knowledge_info WHERE id = #{knowledgeId}
+    </select>
+
+</mapper>
+
+

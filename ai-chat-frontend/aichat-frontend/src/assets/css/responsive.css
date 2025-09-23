@@ -1,0 +1,317 @@
+/* 响应式设计系统 */
+
+/* 基础断点 */
+:root {
+  --mobile: 640px;
+  --tablet: 768px;
+  --desktop: 1024px;
+  --large: 1280px;
+  --xl: 1536px;
+}
+
+/* 移动端优化 (0-640px) */
+@media (max-width: 639px) {
+  /* 容器和间距 */
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* 字体大小 - 移动端优化 */
+  h1 { font-size: 1.25rem; }
+  h2 { font-size: 1.125rem; }
+  h3 { font-size: 1rem; }
+  p, span, div { font-size: 0.875rem; }
+  
+  /* 按钮尺寸 */
+  .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-error {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* 输入框 */
+  .input-field {
+    padding: 0.75rem;
+    font-size: 16px; /* 防止iOS缩放 */
+  }
+  
+  /* 卡片 */
+  .card {
+    margin: 0.5rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
+  
+  /* 模态框 */
+  .modal-content {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  /* 导航栏 */
+  .nav-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  /* 聊天消息 */
+  .message-bubble {
+    max-width: calc(100vw - 3rem);
+  }
+  
+  /* 知识库列表 */
+  .knowledge-list {
+    max-height: 40vh;
+  }
+}
+
+/* 平板端优化 (640px-1023px) */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  /* 中等屏幕的布局调整 */
+  .main-layout {
+    gap: 1.5rem;
+  }
+  
+  /* 知识库侧边栏 */
+  .sidebar {
+    width: 20rem;
+  }
+  
+  /* 聊天区域 */
+  .chat-area {
+    min-height: calc(100vh - 8rem);
+  }
+}
+
+/* 桌面端优化 (1024px+) */
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* 大屏幕的布局 */
+  .main-layout {
+    gap: 2rem;
+  }
+  
+  /* 知识库侧边栏 */
+  .sidebar {
+    width: 24rem;
+  }
+  
+  /* 聊天区域 */
+  .chat-area {
+    min-height: calc(100vh - 10rem);
+  }
+  
+  /* 悬停效果 */
+  .hover-effect {
+    transition: all 0.2s ease;
+  }
+  
+  .hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* 超大屏幕优化 (1280px+) */
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1200px;
+  }
+  
+  /* 更宽的侧边栏 */
+  .sidebar {
+    width: 28rem;
+  }
+  
+  /* 桌面端字体大小优化 */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  p, span, div { font-size: 0.9rem; }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  /* 触摸友好的按钮尺寸 */
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 触摸友好的输入框 */
+  input, textarea, select {
+    min-height: 44px;
+    font-size: 16px;
+  }
+  
+  /* 触摸友好的链接 */
+  a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* 触摸手势支持 */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* 触摸反馈 */
+  .touch-feedback:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+/* 鼠标设备优化 */
+@media (hover: hover) and (pointer: fine) {
+  /* 鼠标悬停效果 */
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 鼠标悬停显示 */
+  .hover-show {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .hover-show:hover {
+    opacity: 1;
+  }
+  
+  /* 鼠标悬停缩放 */
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+}
+
+/* 高分辨率屏幕优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* 高分辨率图标 */
+  .icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* 高分辨率字体 */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  /* 打印时的颜色和背景 */
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+
+/* 深色模式响应式 */
+@media (prefers-color-scheme: dark) {
+  /* 系统级深色模式支持 */
+  .auto-dark {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .high-contrast {
+    border-width: 2px;
+    background-color: #000000;
+    color: #ffffff;
+  }
+}
+
+/* 自定义断点工具类 */
+.mobile-only { display: block; }
+.tablet-up { display: none; }
+.desktop-up { display: none; }
+
+@media (min-width: 640px) {
+  .mobile-only { display: none; }
+  .tablet-up { display: block; }
+}
+
+@media (min-width: 1024px) {
+  .tablet-up { display: none; }
+  .desktop-up { display: block; }
+}
+
+/* 响应式网格系统 */
+.grid-responsive {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 响应式文本 - 优化字体大小 */
+.text-responsive {
+  font-size: 0.8rem;
+  line-height: 1.4rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive {
+    font-size: 0.9rem;
+    line-height: 1.6rem;
+  }
+}

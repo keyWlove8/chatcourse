@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ai-boot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-boot/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/auth/simple/filter/AuthFilter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chatApi/rag/KnowledgeResolver.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chatApi/rag/impl/EmbeddingMangerImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chatApi/rag/pinecone/Langchain4jFilterToPineconeConverter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chatApi/rag/spliter/SemanticChineseDocumentSplitter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/config/JsonConfig.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/config/RagConfig.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/controller/AuthController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/controller/ChatController.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/controller/handler/GlobalExceptionHandler.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/controller/handler/GlobalExceptionHandler2.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/dto/LoginDTO.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/mapper/ChatDetailMapper.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/mapper/impl/KnowledgeMapperImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/mapper/impl/UserMapperImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/param/ImageContextPara.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/ChatService.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/KnowledgeService.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/ai/BaseChatService.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/ai/impl/BaseChatServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/impl/AuthServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/impl/KnowledgeServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/service/impl/RemoteStaticServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/tools/impl/Chat2ImageAdapterServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/tools/impl/SearchToolServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/util/ImageToBase64Converter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/util/PasswdUtil.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/vo/KnowledgeVO.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/vo/UserVO.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-chat/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-static/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-static/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="PROJECT" charset="GBK" />
+  </component>
+</project>

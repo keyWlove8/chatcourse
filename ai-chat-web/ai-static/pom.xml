@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.k8</groupId>
+        <artifactId>ai-web</artifactId>
+        <version>1.2</version>
+    </parent>
+
+    <groupId>com.k8</groupId>
+    <artifactId>ai-static</artifactId>
+    <packaging>jar</packaging>
+
+    <name>ai-static</name>
+
+    <dependencies>
+        <!-- Spring Boot Web Starter - 提供 Web 服务能力 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-el</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tomcat.embed</groupId>
+                    <artifactId>tomcat-embed-websocket</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
+        <!-- Spring Boot Undertow Starter - 使用Undertow作为Web服务器 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        
+        <!-- Hutool 工具库 - 提供文件操作等工具方法 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+        
+        <!-- Lombok - 简化代码 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <!-- Spring Boot 打包插件 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

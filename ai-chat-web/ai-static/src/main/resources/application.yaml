@@ -1,0 +1,30 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
+    endpoint:
+      health:
+        show-details: always
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.apache.tomcat: DEBUG
+    com.k8.file: DEBUG
+
+k8:
+  static:
+    basePath: ./static-files
+    host: http://localhost:9000
+
+server:
+  port: 9000
+  servlet:
+    context-path: /
+

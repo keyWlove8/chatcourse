@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <!-- 翅膀渐变 -->
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 身体渐变 -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- 左翅膀 -->
+  <path d="M12 12 Q6 18 9 27 Q12 33 18 30 Q24 27 21 18 Q18 12 12 12 Z" 
+        fill="url(#wingGrad)" 
+        stroke="#DAA520" 
+        stroke-width="1"/>
+  
+  <!-- 右翅膀 -->
+  <path d="M36 12 Q42 18 39 27 Q36 33 30 30 Q24 27 27 18 Q30 12 36 12 Z" 
+        fill="url(#wingGrad)" 
+        stroke="#DAA520" 
+        stroke-width="1"/>
+  
+  <!-- 身体 -->
+  <ellipse cx="24" cy="24" rx="1.5" ry="12" 
+           fill="url(#bodyGrad)" 
+           stroke="#654321" 
+           stroke-width="1"/>
+  
+  <!-- 触角 -->
+  <path d="M22 12 Q20 9 18 12" 
+        stroke="#8B4513" 
+        stroke-width="1.5" 
+        fill="none" 
+        stroke-linecap="round"/>
+  <path d="M26 12 Q28 9 30 12" 
+        stroke="#8B4513" 
+        stroke-width="1.5" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- 触角顶部装饰 -->
+  <circle cx="18" cy="12" r="1" fill="#FFD700"/>
+  <circle cx="30" cy="12" r="1" fill="#FFD700"/>
+  
+  <!-- 翅膀装饰点 -->
+  <circle cx="15" cy="21" r="1" fill="#FF6B6B"/>
+  <circle cx="33" cy="21" r="1" fill="#FF6B6B"/>
+  <circle cx="18" cy="27" r="0.8" fill="#4ECDC4"/>
+  <circle cx="30" cy="27" r="0.8" fill="#4ECDC4"/>
+</svg>
+
+
+
+
+
+
+
+
+

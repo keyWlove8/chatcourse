@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <!-- 翅膀渐变 -->
+    <linearGradient id="wingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 身体渐变 -->
+    <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 翅膀高光 -->
+    <radialGradient id="wingHighlight" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.5);stop-opacity:1" />
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0);stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- 左翅膀 -->
+  <g>
+    <path d="M12 12 Q6 18 9 27 Q12 33 18 30 Q24 27 21 18 Q18 12 12 12 Z" 
+          fill="url(#wingGrad)" 
+          stroke="#FF8C00" 
+          stroke-width="1.5"/>
+    <path d="M12 12 Q6 18 9 27 Q12 33 18 30 Q24 27 21 18 Q18 12 12 12 Z" 
+          fill="url(#wingHighlight)" 
+          opacity="0.4"/>
+  </g>
+  
+  <!-- 右翅膀 -->
+  <g>
+    <path d="M36 12 Q42 18 39 27 Q36 33 30 30 Q24 27 27 18 Q30 12 36 12 Z" 
+          fill="url(#wingGrad)" 
+          stroke="#FF8C00" 
+          stroke-width="1.5"/>
+    <path d="M36 12 Q42 18 39 27 Q36 33 30 30 Q24 27 27 18 Q30 12 36 12 Z" 
+          fill="url(#wingHighlight)" 
+          opacity="0.4"/>
+  </g>
+  
+  <!-- 身体 -->
+  <ellipse cx="24" cy="24" rx="2" ry="12" 
+           fill="url(#bodyGrad)" 
+           stroke="#654321" 
+           stroke-width="1"/>
+  
+  <!-- 身体装饰点 -->
+  <circle cx="24" cy="20" r="1" fill="#FFD700"/>
+  <circle cx="24" cy="24" r="1" fill="#FFD700"/>
+  <circle cx="24" cy="28" r="1" fill="#FFD700"/>
+  
+  <!-- 触角 -->
+  <path d="M22 12 Q20 9 18 12" 
+        stroke="#8B4513" 
+        stroke-width="1.5" 
+        fill="none" 
+        stroke-linecap="round"/>
+  <path d="M26 12 Q28 9 30 12" 
+        stroke="#8B4513" 
+        stroke-width="1.5" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- 触角顶部装饰 -->
+  <circle cx="18" cy="12" r="2" fill="#FFD700" stroke="#FF8C00" stroke-width="1"/>
+  <circle cx="30" cy="12" r="2" fill="#FFD700" stroke="#FF8C00" stroke-width="1"/>
+  
+  <!-- 眼睛 -->
+  <circle cx="22" cy="22" r="1.5" fill="#000" stroke="#333" stroke-width="0.5"/>
+  <circle cx="26" cy="22" r="1.5" fill="#000" stroke="#333" stroke-width="0.5"/>
+  
+  <!-- 眼睛高光 -->
+  <circle cx="21.5" cy="21.5" r="0.5" fill="#FFF"/>
+  <circle cx="25.5" cy="21.5" r="0.5" fill="#FFF"/>
+  
+  <!-- 嘴巴 -->
+  <path d="M23 26 Q24 27 25 26" 
+        stroke="#8B4513" 
+        stroke-width="1" 
+        fill="none" 
+        stroke-linecap="round"/>
+</svg>
+
+
+
+
+
+
+
+
+

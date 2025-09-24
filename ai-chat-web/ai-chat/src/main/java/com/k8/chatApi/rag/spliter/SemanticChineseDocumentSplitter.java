@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * 使用HanLP进行中文分词，支持智能分割和重叠
  * 
  * @Author: k8
- * @CreateTime: 2025-08-29
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class SemanticChineseDocumentSplitter implements DocumentSplitter {

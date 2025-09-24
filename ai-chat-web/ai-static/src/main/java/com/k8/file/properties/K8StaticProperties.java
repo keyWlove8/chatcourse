@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @Author: k8
- * @CreateTime: 2025-09-22
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @ConfigurationProperties(prefix = "k8.static")

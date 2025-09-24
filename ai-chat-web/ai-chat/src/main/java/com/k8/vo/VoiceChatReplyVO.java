@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * 语音聊天回复VO
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Data

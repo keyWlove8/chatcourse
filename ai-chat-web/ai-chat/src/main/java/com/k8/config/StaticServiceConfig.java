@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * 静态文件服务配置类
  * 
  * @Author: k8
- * @CreateTime: 2025-08-29
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Configuration

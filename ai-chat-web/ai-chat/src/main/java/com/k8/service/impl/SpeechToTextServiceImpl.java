@@ -10,7 +10,7 @@ import java.io.IOException;
  * 语音转文本服务实现
  * 注意：这是一个模拟实现，实际项目中需要集成真实的STT服务
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Service

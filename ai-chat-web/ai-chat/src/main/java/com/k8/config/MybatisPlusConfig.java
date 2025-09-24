@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * MyBatis-Plus配置类
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Configuration

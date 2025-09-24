@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * @Author: k8
- * @CreateTime: 2025-09-22
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class AiProxyFactoryBean implements FactoryBean<Object>, ApplicationContextAware {

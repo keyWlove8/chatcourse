@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * 语音转文本服务接口
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public interface SpeechToTextService {

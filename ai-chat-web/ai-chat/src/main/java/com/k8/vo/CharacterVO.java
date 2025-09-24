@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 /**
  * 角色VO
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Data

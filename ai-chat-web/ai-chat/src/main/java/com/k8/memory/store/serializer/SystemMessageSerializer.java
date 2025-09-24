@@ -12,7 +12,7 @@ import dev.langchain4j.data.message.SystemMessage;
  * 使用全参构造器保留所有元数据信息
  * 
  * @Author: k8
- * @CreateTime: 2025-08-28
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class SystemMessageSerializer implements ChatMessageSerializer {

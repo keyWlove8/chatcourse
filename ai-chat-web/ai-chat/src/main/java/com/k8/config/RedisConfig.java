@@ -8,7 +8,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * @Author: k8
- * @CreateTime: 2025-07-14
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 //@Configuration

@@ -4,7 +4,7 @@ import com.k8.entity.UserInfo;
 
 /**
  * @Author: k8
- * @CreateTime: 2025-08-28
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public interface AuthStore {

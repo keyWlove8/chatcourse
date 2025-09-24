@@ -15,7 +15,7 @@ import java.util.*;
  * LangChain4j Filter 转换为 Pinecone 查询条件的工具类
  * 
  * @Author: k8
- * @CreateTime: 2025-08-29
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class Langchain4jFilterToPineconeConverter {

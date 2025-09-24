@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * @Author: k8
- * @CreateTime: 2025-08-28
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  * 专门用于大模型上下文的VO类，包含完整的LangChain4j消息信息
  */

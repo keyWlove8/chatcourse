@@ -16,7 +16,7 @@ import java.util.List;
  * 使用全参构造器保留所有元数据信息，包括toolExecutionRequests
  * 
  * @Author: k8
- * @CreateTime: 2025-08-28
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class AiMessageSerializer implements ChatMessageSerializer {

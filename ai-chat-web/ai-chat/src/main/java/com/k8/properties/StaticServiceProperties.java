@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * 静态文件服务配置属性
  * 
  * @Author: k8
- * @CreateTime: 2025-08-29
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @ConfigurationProperties(prefix = "k8.static-service")

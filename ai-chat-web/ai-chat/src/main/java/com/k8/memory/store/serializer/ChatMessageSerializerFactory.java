@@ -14,7 +14,7 @@ import java.util.Map;
  * 根据消息类型提供对应的序列化器
  * 
  * @Author: k8
- * @CreateTime: 2025-08-28
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 public class ChatMessageSerializerFactory {

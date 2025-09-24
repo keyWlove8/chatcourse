@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 /**
  * AI角色实体
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Data

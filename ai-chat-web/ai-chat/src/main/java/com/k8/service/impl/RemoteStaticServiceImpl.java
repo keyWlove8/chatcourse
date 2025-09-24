@@ -18,7 +18,7 @@ import java.util.UUID;
  * 远程静态服务实现类
  * 专门负责调用 ai-static 模块的图片上传功�? * 
  * @Author: k8
- * @CreateTime: 2025-08-29
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Service

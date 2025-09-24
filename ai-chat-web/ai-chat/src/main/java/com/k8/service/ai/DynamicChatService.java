@@ -10,7 +10,7 @@ import dev.langchain4j.service.spring.AiServiceWiringMode;
 /**
  * 动态聊天服务 - 支持动态系统提示词
  * @Author: k8
- * @CreateTime: 2025-01-01
+ * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @AiService(wiringMode = AiServiceWiringMode.EXPLICIT,

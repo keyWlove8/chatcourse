@@ -1,13 +1,17 @@
 package com.k8.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.k8.dto.ChatMessageDTO;
 import com.k8.entity.ChatDetail;
 import com.k8.entity.ChatHistory;
+import com.k8.entity.ContextMessage;
 import com.k8.entity.MultiChatMessage;
 import com.k8.enums.KChatMessageType;
 import com.k8.mapper.ChatDetailMapper;
 import com.k8.mapper.ChatHistoryMapper;
 import com.k8.mapper.ChatMessageMapper;
+import com.k8.mapper.ContextMessageMapper;
 import com.k8.metadata.ContentMetadata;
 import com.k8.param.ImageContextPara;
 import com.k8.service.*;
@@ -23,6 +27,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +52,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Resource
     private RemoteStaticService remoteStaticService;
+
+    @Resource
+    private ContextMessageMapper contextMessageMapper;
 
     @Resource
     private ChatDetailMapper chatDetailMapper;
@@ -115,31 +123,35 @@ public class ChatServiceImpl implements ChatService {
     public ChatDetailVO getChatDetailByMemoryId(String memoryId) {
         ChatDetail chatDetail = chatDetailMapper.getChatDetailByMemoryId(memoryId);
         if (chatDetail == null) return null;
-        List<MultiChatMessage> multiChatMessages = chatMessageMapper.selectChatMessagesByMemoryId(memoryId);
+        QueryWrapper<ContextMessage> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda()
+                .eq(ContextMessage::getMemoryId, memoryId)
+                .orderBy(true, true, ContextMessage::getItemIndex);
+        List<ContextMessage> contextMessages = contextMessageMapper.selectList(queryWrapper);
         ChatDetailVO chatDetailVO = new ChatDetailVO();
         chatDetailVO.setMemoryId(memoryId);
         chatDetailVO.setCreateTime(chatDetail.getCreateTime());
-        if (CollectionUtils.isEmpty(multiChatMessages)) {
+        if (CollectionUtils.isEmpty(contextMessages)) {
             chatDetailVO.setMessages(Collections.emptyList());
         } else {
-            List<ChatMessageVO> chatMessageVOS = multiChatMessages.stream()
+            List<ChatMessageVO> chatMessageVOS = contextMessages.stream()
                     .filter(message -> {
                         KChatMessageType type = message.getChatMessageType();
                         return KChatMessageType.USER.equals(type) || KChatMessageType.AI.equals(type);
                     })
-                    .map(multiChatMessage -> {
+                    .map(message -> {
                         ChatMessageVO chatMessageVO = new ChatMessageVO();
-                        chatMessageVO.setTimestamp(multiChatMessage.getTimestamp());
-                        chatMessageVO.setMemoryId(multiChatMessage.getMemoryId());
-                        chatMessageVO.setKnowledgeId(multiChatMessage.getKnowledgeId());
-                        Class<? extends ChatMessage> clazz = multiChatMessage.getChatMessageType().getMessageClass();
+                        chatMessageVO.setTimestamp(message.getTimestamp());
+                        chatMessageVO.setMemoryId(message.getMemoryId());
+                        chatMessageVO.setKnowledgeId(message.getKnowledgeId());
+                        Class<? extends ChatMessage> clazz = message.getChatMessageType().getMessageClass();
                         KChatMessageType type = KChatMessageType.getType(clazz);
                         if (KChatMessageType.USER.equals(type)) {
                             chatMessageVO.setType(USER_CHAT_MESSAGE_TYPE);
                         } else {
                             chatMessageVO.setType(AI_CHAT_MESSAGE_TYPE);
                         }
-                        List<?> metaList = JsonUtil.toObject(multiChatMessage.getContentsMetadata(), List.class);
+                        List<?> metaList = JsonUtil.toObject(message.getContentsMetadata(), List.class);
                         List<ContentVO> list = metaList.stream()
                                 .map(obj -> {
                                     Map<String, Object> map = (Map<String, Object>) obj;
@@ -160,20 +172,24 @@ public class ChatServiceImpl implements ChatService {
         return chatDetailVO;
     }
 
-
+    @Transactional
     @Override
-    public int addMessage(String memoryId, ChatMessageDTO chatMessageDTO) {
-        if (chatMessageDTO == null) return 0;
-
+    public boolean addMessage(String memoryId, ChatMessageDTO chatMessageDTO) {
+        if (chatMessageDTO == null) return false;
+        Long timeStamp = System.currentTimeMillis();
+        //添加到langchain4j上下文中
+        addChainMessage(memoryId, chatMessageDTO, timeStamp);
+        if ((KChatMessageType.AI.equals(chatMessageDTO.getChatMessageType()) && !StringUtils.hasText(chatMessageDTO.getMessageText())) || KChatMessageType.SYSTEM.equals(chatMessageDTO.getChatMessageType())) {
+            return true;
+        }
         String userId = AuthUtil.getUserId();
         ChatDetail chatDetail = chatDetailMapper.getChatDetailByMemoryId(memoryId);
         if (chatDetail == null) {
             chatDetail = new ChatDetail();
-            chatDetail.setCreateTime(System.currentTimeMillis());
+            chatDetail.setCreateTime(timeStamp);
             chatDetail.setCreatorId(userId);
             chatDetail.setMemoryId(memoryId);
             chatDetailMapper.insert(chatDetail);
-            chatDetail = chatDetailMapper.getChatDetailByMemoryId(memoryId);
         }
 
         ChatHistory chatHistory = chatHistoryMapper.getChatHistoryByMemoryId(memoryId);
@@ -182,13 +198,25 @@ public class ChatServiceImpl implements ChatService {
             chatHistory.setMemoryId(memoryId);
             chatHistory.setCreatorId(userId);
             chatHistory.setMessageCount(0);
-            chatHistory.setLastTime(System.currentTimeMillis());
+            chatHistory.setLastTime(timeStamp);
             chatHistoryMapper.insert(chatHistory);
             chatHistory = chatHistoryMapper.getChatHistoryByMemoryId(memoryId);
         }
 
-        // 创建单个消息对象
-        MultiChatMessage multiChatMessage = new MultiChatMessage();
+        addContextMessage(chatMessageDTO, memoryId, timeStamp);
+        if (KChatMessageType.USER.equals(chatMessageDTO.getChatMessageType())) {
+            chatHistory.setLastQuestion(chatMessageDTO.getMessageText());
+        } else if (KChatMessageType.AI.equals(chatMessageDTO.getChatMessageType()) || KChatMessageType.TOOL_EXECUTION_RESULT.equals(chatMessageDTO.getChatMessageType())) {
+            chatHistory.setLastAnswer(chatMessageDTO.getMessageText());
+        }
+        //todo 这里可能账户同时多个操作统计的不准确，暂时不管
+        chatHistory.setMessageCount(chatHistory.getMessageCount() + 1);
+        chatHistory.setLastTime(timeStamp);
+        chatHistoryMapper.updateById(chatHistory);
+        return true;
+    }
+
+    private void addContextMessage(ChatMessageDTO chatMessageDTO, String memoryId, Long timeStamp) {
         List<ContentMetadata> metadataList = new LinkedList<>();
         ContentMetadata textMetadata = new ContentMetadata(TEXT_CONTENT_TYPE, chatMessageDTO.getMessageText());
         metadataList.add(textMetadata);
@@ -199,30 +227,26 @@ public class ChatServiceImpl implements ChatService {
             }
         }
         String metadataJson = JsonUtil.objectToString(metadataList);
-        multiChatMessage.setChatMessageType(chatMessageDTO.getChatMessageType())
-                .setTimestamp(System.currentTimeMillis())
+        ContextMessage contextMessage = new ContextMessage();
+        contextMessage.setChatMessageType(chatMessageDTO.getChatMessageType());
+        contextMessage.setContentsMetadata(metadataJson);
+        contextMessage.setKnowledgeId(chatMessageDTO.getKnowledgeId());
+        contextMessage.setTimestamp(timeStamp);
+        contextMessage.setMemoryId(memoryId);
+        contextMessageMapper.insert(contextMessage);
+    }
+
+    private void addChainMessage(String userId, ChatMessageDTO chatMessageDTO, long timeStamp) {
+        MultiChatMessage multiChatMessage = new MultiChatMessage();
+        multiChatMessage
+                .setTimestamp(timeStamp)
                 .setRealChatMessage(chatMessageDTO.getRealChatMessage())
-                .setContentsMetadata(metadataJson)
-                .setDetailId(chatDetail.getId())
                 .setKnowledgeId(chatMessageDTO.getKnowledgeId())
                 .setUserId(userId)
-                .setMemoryId(chatMessageDTO.getMemoryId());
+                .setMemoryId(chatMessageDTO.getMemoryId())
+                .setChatMessageType(chatMessageDTO.getChatMessageType());
 
-        // 添加单个消息 - 使用MyBatis-Plus的insert方法
-        int result = chatMessageMapper.insert(multiChatMessage);
-
-        // 更新聊天历史
-        if (result > 0) {
-            if (KChatMessageType.USER.equals(chatMessageDTO.getChatMessageType())) {
-                chatHistory.setLastQuestion(chatMessageDTO.getMessageText());
-            } else if (KChatMessageType.AI.equals(chatMessageDTO.getChatMessageType())) {
-                chatHistory.setLastAnswer(chatMessageDTO.getMessageText());
-            }
-            chatHistory.setMessageCount(chatHistory.getMessageCount() + 1);
-            chatHistory.setLastTime(System.currentTimeMillis());
-            chatHistoryMapper.updateById(chatHistory);
-        }
-        return result;
+        chatMessageMapper.insert(multiChatMessage);
     }
 
     @Override

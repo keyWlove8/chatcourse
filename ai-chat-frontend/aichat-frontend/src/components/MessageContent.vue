@@ -84,7 +84,7 @@
             <span class="text-sm font-medium text-purple-700 dark:text-purple-300">音频文件</span>
           </div>
           <audio controls class="w-full">
-            <source :src="content.value" :type="content.mimeType || 'audio/mpeg'">
+            <source :src="convertAudioUrl(content.value)" :type="content.mimeType || 'audio/mpeg'">
             您的浏览器不支持音频播放
           </audio>
         </div>
@@ -127,6 +127,7 @@
 
 <script>
 import { convertImageUrl } from '../utils/imageUrl'
+import { convertAudioUrl } from '../utils/audioUrl'
 
 export default {
   name: 'MessageContent',
@@ -140,6 +141,7 @@ export default {
   methods: {
     // 将导入的函数暴露给模板使用
     convertImageUrl,
+    convertAudioUrl,
     // 获取图片的alt属性
     getImageAlt(content) {
       if (content.value) {

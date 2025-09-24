@@ -439,7 +439,6 @@ export const useChatStore = defineStore('chat', {
     async loadChatHistory(memoryId) {
       // 如果当前已经在同一个会话中，不需要重复加载
       if (this.currentMemoryId === memoryId) {
-        console.log('当前会话已经是目标会话，无需重复加载')
         return
       }
       
@@ -455,7 +454,6 @@ export const useChatStore = defineStore('chat', {
         
         // 加载历史消息 - 确保与 ChatDetailVO 结构一致
         if (res.data && res.data.messages) {
-          console.log('原始历史消息:', res.data.messages) // 调试日志
           
                      this.messages = res.data.messages
              .filter(msg => {

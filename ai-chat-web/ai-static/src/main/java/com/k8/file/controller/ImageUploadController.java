@@ -22,7 +22,6 @@ import java.util.UUID;
  * @Version: 1.0
  */
 @RestController
-@RequestMapping("/api/image")
 public class ImageUploadController {
     
     @Value("${k8.static.basePath}")
@@ -35,7 +34,7 @@ public class ImageUploadController {
      * 图片上传接口
      * 简化版本，不需要复杂的策略验证
      */
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/image/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadVo uploadImage(@RequestParam("file") MultipartFile file,
                                @RequestParam(value = "category", defaultValue = "chat") String category) {
         try {
@@ -77,7 +76,7 @@ public class ImageUploadController {
     /**
      * 直接上传接口（不需要策略验证）
      */
-    @PostMapping(value = "/upload/direct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/image/upload/direct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadVo uploadDirect(@RequestParam("file") MultipartFile file,
                                 @RequestParam(value = "category", defaultValue = "chat") String category) {
         return uploadImage(file, category);

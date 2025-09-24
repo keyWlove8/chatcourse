@@ -31,7 +31,4 @@ public class ChatDetail {
     
     @TableField("create_time")
     private Long createTime;
-    
-    @TableField(exist = false)
-    private List<MultiChatMessage> chatMessages;
 }

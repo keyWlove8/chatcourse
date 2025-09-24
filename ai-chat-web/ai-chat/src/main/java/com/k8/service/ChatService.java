@@ -24,7 +24,7 @@ public interface ChatService {
     ChatDetailVO getChatDetailByMemoryId(String s);
 
     // 改为添加单个消息
-    int addMessage(String memoryId, ChatMessageDTO chatMessageDTO);
+    boolean addMessage(String memoryId, ChatMessageDTO chatMessageDTO);
 
     boolean deleteByMemoryId(String s);
     

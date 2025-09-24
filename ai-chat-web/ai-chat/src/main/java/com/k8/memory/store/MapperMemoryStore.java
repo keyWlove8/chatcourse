@@ -7,10 +7,7 @@ import com.k8.memory.store.serializer.ChatMessageSerializerFactory;
 import com.k8.service.ChatService;
 import com.k8.util.LocalUtil;
 import com.k8.vo.LangChainMessageVO;
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.SystemMessage;
-import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +40,7 @@ public class MapperMemoryStore implements ChatMemoryStore {
         }
 
         // 将存储的消息还原为LangChain4j消息
-        return messages.stream()
+        List<ChatMessage> result = messages.stream()
                 .map(message -> {
                     try {
                         // 使用专门的序列化器进行反序列化
@@ -51,11 +48,13 @@ public class MapperMemoryStore implements ChatMemoryStore {
                         ChatMessageSerializer serializer = ChatMessageSerializerFactory.getSerializer(clazz);
                         return serializer.deserialize(message.getRealChatMessage());
                     } catch (Exception e) {
+                        log.error("序列化失败：" + message);
                         return null;
                     }
                 })
                 .filter(msg -> msg != null) // 过滤掉反序列化失败的消息
                 .toList();
+        return result;
     }
 
 
@@ -80,6 +79,8 @@ public class MapperMemoryStore implements ChatMemoryStore {
                 messageText = systemMessage.text();
             }else if (lastMessage instanceof AiMessage aiMessage){
                 messageText = aiMessage.text();
+            }else if (lastMessage instanceof ToolExecutionResultMessage toolExecutionResultMessage){
+                messageText = toolExecutionResultMessage.text();
             }
             // 创建DTO，存储转换后的内容
             ChatMessageDTO chatMessageDTO = new ChatMessageDTO(

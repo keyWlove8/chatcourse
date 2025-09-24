@@ -21,7 +21,7 @@ logging:
 k8:
   static:
     basePath: ./static-files
-    host: http://localhost:9000
+    host: http://localhost:8080
 
 server:
   port: 9000

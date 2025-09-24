@@ -102,7 +102,7 @@
         <!-- 当前AI语音回复 -->
         <div v-if="currentAudioUrl" class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
           <div class="text-xs text-blue-500 dark:text-blue-400 mb-2">{{ characterName }}的语音回复：</div>
-          <audio :src="currentAudioUrl" controls class="w-full h-8" autoplay>
+          <audio :src="convertAudioUrl(currentAudioUrl)" controls class="w-full h-8" autoplay>
             您的浏览器不支持音频播放
           </audio>
         </div>
@@ -418,11 +418,8 @@ const stopRecording = () => {
 const handleVoiceMessage = async (audioBlob) => {
   // 检查音频是否太短（少于100字节）
   if (audioBlob.size < 100) {
-    console.log('音频太短，忽略')
     return
   }
-  
-  console.log('发送音频，大小:', audioBlob.size, '字节')
   
   isProcessing.value = true
   isWaitingForResponse.value = true
@@ -435,11 +432,6 @@ const handleVoiceMessage = async (audioBlob) => {
     formData.append('memoryId', props.memoryId)
     formData.append('characterId', props.characterId)
     
-    console.log('发送FormData:', {
-      audio: audioBlob.size + ' bytes',
-      memoryId: props.memoryId,
-      characterId: props.characterId
-    })
     
     if (props.knowledgeId) {
       formData.append('knowledgeId', props.knowledgeId)

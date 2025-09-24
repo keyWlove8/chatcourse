@@ -816,7 +816,6 @@ onMounted(async () => {
       
       // 用户信息初始化成功后，再初始化知识库列表和历史会话
       if (authStore.isLogin) {
-        console.log('用户信息加载完成:', authStore.userInfo)
         await Promise.all([
           knowledgeStore.fetchKnowledgeList(),
           chatStore.fetchChatHistoryList()

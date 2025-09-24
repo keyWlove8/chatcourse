@@ -12,7 +12,7 @@ const devConfig = {
 // 生产环境配置
 const prodConfig = {
   // 代理服务地址（生产环境需要修改为实际代理地址）
-  proxyUrl: 'https://your-domain.com'
+  proxyUrl: 'http://localhost:8080'
 }
 
 // 根据环境选择配置

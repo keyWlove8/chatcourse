@@ -33,9 +33,6 @@ public class MultiChatMessage {
     @TableField("real_chat_message")
     private String realChatMessage;
     
-    @TableField("contents_metadata")
-    private String contentsMetadata;
-    
     @TableField("knowledge_id")
     private String knowledgeId;
     
@@ -44,9 +41,4 @@ public class MultiChatMessage {
     
     @TableField("user_id")
     private String userId;
-    
-    @TableField("detail_id")
-    private String detailId;
-
-
 }

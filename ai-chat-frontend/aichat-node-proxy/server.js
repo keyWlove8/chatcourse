@@ -492,8 +492,6 @@ async function handleFileUpload(req, res, backendUrl) {
     }
     
     try {
-      console.log('multer处理完成，请求体:', req.body);
-      console.log('multer处理完成，文件:', req.files);
       
       // 准备FormData数据
       const FormData = require('form-data');
@@ -512,8 +510,6 @@ async function handleFileUpload(req, res, backendUrl) {
         req.files.forEach(file => {
           let fileFieldName = 'file';
           
-          console.log(`处理文件: ${file.originalname}, URL: ${req.originalUrl}`);
-          
           if (req.originalUrl.includes('/chat/send')) {
             fileFieldName = 'image';
           } else if (req.originalUrl.includes('/chat/voice')) {
@@ -523,18 +519,12 @@ async function handleFileUpload(req, res, backendUrl) {
           } else if (req.originalUrl.includes('/character/upload-avatar')) {
             fileFieldName = 'file';
           }
-          
-          console.log(`添加文件字段: ${fileFieldName} = ${file.originalname}, 大小: ${file.buffer.length}字节`);
           formData.append(fileFieldName, file.buffer, {
             filename: file.originalname,
             contentType: file.mimetype
           });
         });
-      } else {
-        console.log('没有文件数据');
       }
-      
-      console.log('转发FormData到后端:', backendUrl);
       
       // 转发请求到后端
       const response = await axios({

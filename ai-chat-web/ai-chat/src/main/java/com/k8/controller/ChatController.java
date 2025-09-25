@@ -24,28 +24,6 @@ public class ChatController {
     @Resource
     private ChatService chatService;
 
-    /**
-     * 发送聊天消息
-     */
-    @PostMapping("/send")
-    public Result<UnifiedChatReplyVO> sendChatMessage(
-            @RequestParam("content") String content,
-            @RequestParam("characterId") String characterId,
-            @RequestParam(value = "knowledgeId", required = false) String knowledgeId,
-            @RequestParam("memoryId") String memoryId,
-            @RequestParam(value = "image", required = false) MultipartFile image
-    ) {
-        String aiReply = chatService.processMessageWithCharacter(content, memoryId, knowledgeId, image, characterId);
-
-        // 返回统一响应体
-        UnifiedChatReplyVO replyVO = new UnifiedChatReplyVO();
-        replyVO.setReply(aiReply);
-        replyVO.setMemoryId(memoryId);
-        replyVO.setTimestamp(System.currentTimeMillis());
-        replyVO.setMessageType("text");
-
-        return Result.success(replyVO);
-    }
 
     @GetMapping("/history/list")
     public Result<List<ChatHistoryVO>> getChatHistoryList() {
@@ -81,29 +59,6 @@ public class ChatController {
         return Result.success(replyVO);
     }
 
-    /**
-     * 发送语音消息
-     */
-    @PostMapping("/voice")
-    public Result<UnifiedChatReplyVO> sendVoiceMessage(
-            @RequestParam("audio") MultipartFile audioFile,
-            @RequestParam("characterId") String characterId,
-            @RequestParam("memoryId") String memoryId,
-            @RequestParam(value = "knowledgeId", required = false) String knowledgeId
-    ) {
-        VoiceChatReplyVO voiceReply = chatService.processVoiceMessage(audioFile, characterId, memoryId, knowledgeId);
-
-        // 转换为统一响应体
-        UnifiedChatReplyVO replyVO = new UnifiedChatReplyVO();
-        replyVO.setReply(voiceReply.getAiReply());
-        replyVO.setAudioUrl(voiceReply.getAudioUrl());
-        replyVO.setTranscribedText(voiceReply.getTranscribedText());
-        replyVO.setMemoryId(voiceReply.getMemoryId());
-        replyVO.setTimestamp(voiceReply.getTimestamp());
-        replyVO.setMessageType("voice");
-
-        return Result.success(replyVO);
-    }
 
     /**
      * 发送语音角色聊天消息

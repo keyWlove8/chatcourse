@@ -1,7 +1,7 @@
 package com.k8.service.impl;
 
 
-import com.k8.chatApi.rag.EmbeddingManger;
+import com.k8.chat.rag.EmbeddingManger;
 import com.k8.dto.KnowledgeCreateDTO;
 import com.k8.entity.KnowledgeInfo;
 import com.k8.exception.BusinessException;

@@ -57,4 +57,7 @@ public class AiCharacter {
     
     @TableField("updated_time")
     private Long updatedTime;               // 更新时间
+    
+    @TableField("voice_id")
+    private String voiceId;                 // 关联的音色ID
 }

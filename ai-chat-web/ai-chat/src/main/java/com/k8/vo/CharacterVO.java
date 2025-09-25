@@ -27,4 +27,6 @@ public class CharacterVO {
     private Integer popularityScore;        // 热度评分
     private Long createdTime;               // 创建时间
     private Long updatedTime;               // 更新时间
+    private String voiceId;                 // 关联的音色ID
+    private VoiceQueryVO voice;             // 关联的音色信息
 }

@@ -76,13 +76,14 @@ mybatis-plus:
 
 k8:
   ai:
-    base-package: com.k8.tools
+    base-package: com.k8
     model-key-to-api-key:
       qwen-vl-plus: sk-b49bab490292431a8ecfce2c6c2f31b9
   mcp:
     search:
       model-name: baidu_search_v2
       api-key: bce-v3/ALTAK-ctCacvionwLEhpNZFDupZ/c417857ff7e3a49f829abd45f3b12763e10b03cd
+      url: https://qianfan.baidubce.com/v2/ai_search/chat/completions
   static-service:
     static-server-url: http://localhost:9000
     upload-path: /api/image/upload/direct
@@ -90,4 +91,4 @@ k8:
     # JWT配置
     # 对称加密密钥（开发环境使用）
     secret-key: k8DefaultSecretKeyForJWTTokenGeneration2025
-
+debug: true

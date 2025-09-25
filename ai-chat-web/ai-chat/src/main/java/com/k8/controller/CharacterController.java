@@ -112,4 +112,5 @@ public class CharacterController {
             return Result.fail("头像上传失败: " + e.getMessage());
         }
     }
+    
 }

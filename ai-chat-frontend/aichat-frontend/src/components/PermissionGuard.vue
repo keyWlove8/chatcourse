@@ -25,7 +25,10 @@ const authStore = useAuthStore()
 
 // 检查权限
 const hasPermission = computed(() => {
-  if (!authStore.isLogin) return false
+  if (!authStore.isLogin) {
+    console.log('PermissionGuard: 用户未登录')
+    return false
+  }
   
   // 如果指定了具体权限
   if (props.permission) {
@@ -36,13 +39,25 @@ const hasPermission = computed(() => {
     // 检查用户是否满足任一权限要求
     const hasAnyPermission = requiredPermissions.some(permission => {
       if (permission === 'isAdmin') {
+        console.log('PermissionGuard: 检查管理员权限', {
+          permission,
+          userInfo: authStore.userInfo,
+          isAdmin: authStore.userInfo.isAdmin
+        })
         return authStore.userInfo.isAdmin
       }
       // 可以扩展更多权限类型
       return false
     })
     
-    return props.inverse ? !hasAnyPermission : hasAnyPermission
+    const result = props.inverse ? !hasAnyPermission : hasAnyPermission
+    console.log('PermissionGuard: 权限检查结果', {
+      permission: props.permission,
+      hasAnyPermission,
+      inverse: props.inverse,
+      result
+    })
+    return result
   }
   
   // 默认允许

@@ -1,6 +1,6 @@
 package com.k8.config;
 
-import com.k8.memory.store.MapperMemoryStore;
+import com.k8.chat.memory.MapperMemoryStore;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;

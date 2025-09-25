@@ -6,8 +6,8 @@
         <div class="flex items-center justify-between">
           <!-- Logo区域 -->
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-              <img src="/butterfly-cute.svg" alt="AiChat" class="w-6 h-6" />
+            <div class="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center shadow-sm overflow-hidden">
+              <img src="/kunkun.jpg" alt="AiChat" class="w-full h-full object-cover rounded-lg" />
             </div>
             <div>
               <h1 class="text-xl font-bold text-gray-900 dark:text-white">AiChat</h1>
@@ -66,8 +66,8 @@
       <!-- 桌面端导航 -->
       <div class="hidden md:flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm">
-            <img src="/butterfly-cute.svg" alt="AiChat" class="w-6 h-6" />
+          <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-sm overflow-hidden">
+            <img src="/kunkun.jpg" alt="AiChat" class="w-full h-full object-cover rounded-lg" />
           </div>
           <div>
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white">AiChat</h1>

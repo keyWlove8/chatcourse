@@ -22,4 +22,5 @@ public class CharacterCreateDTO {
     private String avatarUrl;               // 头像URL
     private String systemPrompt;            // 系统提示词
     private Boolean isPublic;               // 是否公开
+    private String voiceId;                 // 关联的音色ID
 }

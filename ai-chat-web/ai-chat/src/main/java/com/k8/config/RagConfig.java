@@ -1,10 +1,10 @@
 package com.k8.config;
 
-import com.k8.chatApi.rag.EmbeddingManger;
+import com.k8.chat.rag.EmbeddingManger;
 import com.k8.service.KnowledgeService;
-import com.k8.chatApi.rag.KnowledgeResolver;
-import com.k8.chatApi.rag.MultiContentRetriever;
-import com.k8.chatApi.rag.impl.EmbeddingMangerImpl;
+import com.k8.chat.rag.KnowledgeResolver;
+import com.k8.chat.rag.MultiContentRetriever;
+import com.k8.chat.rag.impl.EmbeddingMangerImpl;
 import com.k8.properties.PineconeProperties;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;

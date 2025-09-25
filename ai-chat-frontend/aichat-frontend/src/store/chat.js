@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { sendChatMessage, getChatHistoryList, getChatHistoryDetail } from '@/services/chatService'
+import { getChatHistoryList, getChatHistoryDetail } from '@/services/chatService'
 import { sendCharacterMessage } from '@/services/characterService'
 import { convertMessageImageUrls } from '../utils/imageUrl'
 
@@ -104,150 +104,6 @@ export const useChatStore = defineStore('chat', {
       })
     },
     
-    // 发送消息（支持文本和单张图片，知识库可选）
-    async sendMessage(knowledgeId = null, images = [], content = null, retryCount = 0) {
-      // 优先使用传入的content参数，如果没有则使用store中的inputContent
-      const messageContent = content || this.inputContent.trim()
-      
-      // 必须要有文本内容才能发送，即使有图片也不行
-      if (!messageContent) {
-        alert('请输入消息内容')
-        return
-      }
-
-      // 验证图片文件
-      if (images.length > 0) {
-        const image = images[0]
-        if (image.file) {
-          const validation = await this.validateImageFile(image.file)
-          if (!validation.valid) {
-            // 显示错误提示
-            alert(validation.error)
-            return
-          }
-        }
-      }
-
-      // 如果是第一次发送消息，生成会话ID
-      if (!this.currentMemoryId) {
-        this.currentMemoryId = this.generateSessionId()
-        this.addToHistoryList()
-      }
-
-      // 检查是否是重试消息（通过比较内容和会话ID来判断）
-      const isRetry = this.lastFailedMessage && 
-                     this.lastFailedMessage.content === messageContent &&
-                     this.lastFailedMessage.memoryId === this.currentMemoryId &&
-                     this.lastFailedMessage.knowledgeId === knowledgeId
-      
-      // 如果不是重试，才添加用户消息到列表
-      if (!isRetry) {
-        // 添加用户消息到列表 - 完全匹配 ChatMessageVO 结构
-        const userMessage = {
-          id: String(Date.now()),           // 消息ID (String)
-          memoryId: this.currentMemoryId,  // 会话ID (String)
-          type: ChatMessageType.USER,      // 消息类型
-          contents: [],                    // 内容列表 (List<Content>)
-          timestamp: Date.now()            // 时间戳
-        }
-        
-        // 添加文本内容
-        if (messageContent.trim()) {
-          userMessage.contents.push({
-            type: ContentType.TEXT,
-            value: messageContent
-          })
-        }
-        
-        // 如果有图片，只添加第一张（单张图片限制）
-        if (images.length > 0) {
-          const image = images[0]
-          userMessage.contents.push({
-            type: ContentType.IMAGE,
-            value: image.url || image.preview    // 图片URL
-          })
-        }
-        
-        this.messages.push(userMessage)
-      }
-      
-      // 清空输入框内容（只有在非重试时才清空）
-      if (!isRetry) {
-        // 保存当前消息内容到store中，用于重试
-        this.inputContent = messageContent
-      }
-      this.isSending = true
-
-      try {
-        // 准备发送的数据 - 确保与后端参数完全匹配
-        const sendData = {
-          content: messageContent,            // 消息内容
-          knowledgeId: knowledgeId || null,   // 知识库ID（传递给后端，但不存储）
-          memoryId: this.currentMemoryId,     // 会话ID（必需）
-          image: images.length > 0 ? images[0].file : undefined // 图片文件
-        }
-        
-        // 调用 API 获取 AI 回复
-        const res = await sendChatMessage(sendData)
-        
-        // 添加 AI 回复到列表 - 完全匹配 ChatMessageVO 结构
-        this.messages.push({
-          id: String(Date.now() + 1),      // 消息ID (String)
-          memoryId: this.currentMemoryId,  // 会话ID (String)
-          type: ChatMessageType.AI,        // 消息类型
-          contents: [{
-            type: ContentType.TEXT,
-            value: res.data.reply
-          }],
-          timestamp: Date.now()            // 时间戳
-        })
-        
-        // 更新会话信息
-        this.updateCurrentSessionInfo(
-          messageContent, // 用户问题
-          res.data.reply  // AI回复
-        )
-        
-        // 清除上传错误和失败消息
-        this.uploadError = null
-        this.lastFailedMessage = null
-        
-        // 发送成功后清空输入内容，为下次发送做准备
-        this.inputContent = ''
-        
-      } catch (err) {
-        console.error('发送消息失败', err)
-        
-        // 保存失败消息信息，用于重试
-        this.lastFailedMessage = {
-          knowledgeId,
-          images,
-          content: messageContent,
-          memoryId: this.currentMemoryId
-        }
-        
-        // 添加错误提示 - 完全匹配 ChatMessageVO 结构
-        this.messages.push({
-          id: String(Date.now() + 1),      // 消息ID (String)
-          memoryId: this.currentMemoryId,  // 会话ID (String)
-          type: ChatMessageType.SYSTEM,    // 错误消息使用SYSTEM类型
-          contents: [{
-            type: ContentType.TEXT,
-            value: this.getErrorMessage(err)
-          }],
-          timestamp: Date.now(),           // 时间戳
-          isError: true                    // 标记为错误消息
-        })
-        
-        // 更新会话信息（即使失败也更新）
-        this.updateCurrentSessionInfo(
-          this.generateSessionTitle(messageContent),
-          '消息发送失败'
-        )
-      } finally {
-        this.isSending = false
-      }
-    },
 
     // 发送角色聊天消息
     async sendCharacterMessage(characterId, knowledgeId = null, images = [], content = null, retryCount = 0) {
@@ -835,7 +691,15 @@ export const useChatStore = defineStore('chat', {
       }
       
       // 重新发送消息，传递失败消息的内容
-      await this.sendMessage(
+      // 注意：这里需要characterId，但retryFailedMessage方法没有接收characterId参数
+      // 需要从当前状态获取或传递characterId
+      if (!this.lastFailedMessage.characterId) {
+        console.error('重试消息时缺少角色ID')
+        return
+      }
+      
+      await this.sendCharacterMessage(
+        this.lastFailedMessage.characterId,
         this.lastFailedMessage.knowledgeId,
         this.lastFailedMessage.images,
         this.lastFailedMessage.content  // 传递失败消息的内容

@@ -76,10 +76,12 @@ CREATE TABLE IF NOT EXISTS ai_character (
     popularity_score INT DEFAULT 0 COMMENT '热度评分',
     created_time BIGINT NOT NULL COMMENT '创建时间',
     updated_time BIGINT NOT NULL COMMENT '更新时间',
+    voice_id VARCHAR(50) COMMENT '关联的音色ID',
     INDEX idx_creator_id (creator_id),
     INDEX idx_name (name),
     INDEX idx_popularity (popularity_score),
-    INDEX idx_created_time (created_time)
+    INDEX idx_created_time (created_time),
+    INDEX idx_voice_id (voice_id)
     ) COMMENT 'AI角色表';
 
 -- 上下文消息表
@@ -96,6 +98,27 @@ CREATE TABLE IF NOT EXISTS context_message (
     INDEX idx_knowledge_id (knowledge_id)
     ) COMMENT '上下文消息表';
 
+-- 音色信息表
+CREATE TABLE IF NOT EXISTS voice_info (
+    id VARCHAR(50) PRIMARY KEY COMMENT '音色ID',
+    voice_code VARCHAR(100) NOT NULL UNIQUE COMMENT '声音码/标识',
+    description TEXT COMMENT '声音描述',
+    gender VARCHAR(20) NOT NULL COMMENT '声音性别：male/female/neutral',
+    name VARCHAR(100) NOT NULL COMMENT '声音名称',
+    model_url VARCHAR(500) COMMENT '模型URL',
+    model_name VARCHAR(100) COMMENT '模型名称',
+    api_key VARCHAR(500) COMMENT 'API密钥',
+    create_time BIGINT NOT NULL COMMENT '创建时间',
+    creator_id VARCHAR(100) NOT NULL COMMENT '创建者ID',
+    is_enabled TINYINT DEFAULT 1 COMMENT '是否启用：0-禁用，1-启用',
+    INDEX idx_voice_code (voice_code),
+    INDEX idx_gender (gender),
+    INDEX idx_name (name),
+    INDEX idx_creator_id (creator_id),
+    INDEX idx_create_time (create_time),
+    INDEX idx_is_enabled (is_enabled)
+) COMMENT '音色信息表';
+
 -- 插入默认管理员用户
 INSERT INTO user_info (user_id, username, password, type) VALUES
                                                               ('admin_001', 'admin', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj8X8v5QKz2K', 'admin'),
@@ -106,4 +129,12 @@ INSERT INTO user_info (user_id, username, password, type) VALUES
 INSERT INTO ai_character (id, name, description, personality, background_story, speaking_style, system_prompt, creator_id, is_public, popularity_score, created_time, updated_time) VALUES
                                                                                                                                                                                         ('char_001', '小助手', '一个友好的AI助手', '友善、耐心、乐于助人', '我是一个AI助手，专门帮助用户解决问题', '说话温和、简洁明了', '你是一个友好的AI助手，请用温和、简洁的语言回答用户的问题。', 'admin_001', true, 0, UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000),
                                                                                                                                                                                         ('char_002', '编程导师', '专业的编程指导老师', '专业、严谨、有耐心', '我是一名资深的编程导师，有丰富的教学经验', '说话专业、条理清晰', '你是一名专业的编程导师，请用专业、条理清晰的语言指导用户学习编程。', 'admin_001', true, 0, UNIX_TIMESTAMP() * 1000, UNIX_TIMESTAMP() * 1000)
+    ON DUPLICATE KEY UPDATE name = VALUES(name);
+
+-- 插入默认音色
+INSERT INTO voice_info (id, voice_code, description, gender, name, model_url, model_name, api_key, create_time, creator_id, is_enabled) VALUES
+                                                                                                                                            ('voice_001', 'xiaoyun', '温柔女声，适合日常对话', 'female', '小云', 'https://api.example.com/tts', 'XiaoYun', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                                                            ('voice_002', 'xiaogang', '沉稳男声，适合专业场景', 'male', '小刚', 'https://api.example.com/tts', 'XiaoGang', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                                                            ('voice_003', 'xiaoli', '活泼女声，适合轻松话题', 'female', '小丽', 'https://api.example.com/tts', 'XiaoLi', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                                                            ('voice_004', 'xiaoming', '中性声音，适合正式场合', 'neutral', '小明', 'https://api.example.com/tts', 'XiaoMing', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1)
     ON DUPLICATE KEY UPDATE name = VALUES(name);

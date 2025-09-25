@@ -7,9 +7,11 @@ import com.k8.dto.CharacterCreateDTO;
 import com.k8.dto.CharacterQueryDTO;
 import com.k8.entity.AiCharacter;
 import com.k8.mapper.CharacterMapper;
+import com.k8.mapper.VoiceMapper;
 import com.k8.service.CharacterService;
 import com.k8.util.AuthUtil;
 import com.k8.vo.CharacterVO;
+import com.k8.vo.VoiceQueryVO;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,10 +28,21 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Resource
     private CharacterMapper characterMapper;
+    
+    @Resource
+    private VoiceMapper voiceMapper;
 
     @Override
     public CharacterVO createCharacter(CharacterCreateDTO createDTO) {
         String userId = AuthUtil.getUserId();
+        
+        // 验证音色是否存在（如果提供了音色ID）
+        if (StringUtils.hasText(createDTO.getVoiceId())) {
+            VoiceQueryVO voice = voiceMapper.selectVoiceQueryById(createDTO.getVoiceId());
+            if (voice == null) {
+                throw new RuntimeException("音色不存在");
+            }
+        }
         
         AiCharacter character = new AiCharacter();
         BeanUtils.copyProperties(createDTO, character);
@@ -96,6 +109,14 @@ public class CharacterServiceImpl implements CharacterService {
             throw new RuntimeException("无权限修改此角色");
         }
         
+        // 验证音色是否存在（如果提供了音色ID）
+        if (StringUtils.hasText(updateDTO.getVoiceId())) {
+            VoiceQueryVO voice = voiceMapper.selectVoiceQueryById(updateDTO.getVoiceId());
+            if (voice == null) {
+                throw new RuntimeException("音色不存在");
+            }
+        }
+        
         BeanUtils.copyProperties(updateDTO, existingCharacter);
         existingCharacter.setUpdatedTime(System.currentTimeMillis());
         
@@ -134,6 +155,18 @@ public class CharacterServiceImpl implements CharacterService {
     private CharacterVO convertToVO(AiCharacter character) {
         CharacterVO vo = new CharacterVO();
         BeanUtils.copyProperties(character, vo);
+        
+        // 加载关联的音色信息
+        if (StringUtils.hasText(character.getVoiceId())) {
+            try {
+                VoiceQueryVO voice = voiceMapper.selectVoiceQueryById(character.getVoiceId());
+                vo.setVoice(voice);
+            } catch (Exception e) {
+                // 如果音色不存在或查询失败，不设置音色信息
+                vo.setVoice(null);
+            }
+        }
+        
         return vo;
     }
 }

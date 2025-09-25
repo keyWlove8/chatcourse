@@ -252,6 +252,20 @@
           </div>
         </div>
 
+        <!-- 音色选择 -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            音色选择
+          </label>
+          <VoiceSelector 
+            :selected-voice-id="form.voiceId"
+            @voice-selected="handleVoiceSelected"
+          />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            为角色选择一个音色，用于语音合成
+          </p>
+        </div>
+
         <!-- 系统提示词 -->
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -298,6 +312,7 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import { useCharacterStore } from '@/store/character'
 import { uploadCharacterAvatar } from '@/services/characterService'
 import { convertImageUrl } from '@/utils/imageUrl'
+import VoiceSelector from './VoiceSelector.vue'
 
 const characterStore = useCharacterStore()
 
@@ -318,7 +333,8 @@ const form = reactive({
   speakingStyle: '',
   avatarUrl: '',
   systemPrompt: '',
-  isPublic: true
+  isPublic: true,
+  voiceId: ''
 })
 
 // 编辑的角色ID
@@ -360,6 +376,7 @@ const editCharacter = (character) => {
   form.avatarUrl = character.avatarUrl || ''
   form.systemPrompt = character.systemPrompt
   form.isPublic = character.isPublic
+  form.voiceId = character.voiceId || ''
   showEditModal.value = true
 }
 
@@ -385,6 +402,7 @@ const resetForm = () => {
   form.avatarUrl = ''
   form.systemPrompt = ''
   form.isPublic = true
+  form.voiceId = ''
   editingCharacterId.value = null
 }
 
@@ -469,6 +487,11 @@ watch([showCreateModal, showEditModal], ([create, edit]) => {
     openCreateModal()
   }
 })
+
+// 处理音色选择
+const handleVoiceSelected = (voice) => {
+  form.voiceId = voice ? voice.id : ''
+}
 
 // 组件挂载时加载角色列表
 onMounted(() => {

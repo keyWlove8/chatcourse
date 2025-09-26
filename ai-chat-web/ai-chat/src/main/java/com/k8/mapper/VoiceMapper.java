@@ -21,19 +21,31 @@ public interface VoiceMapper extends BaseMapper<VoiceInfo> {
     /**
      * 查询所有启用的音色（用于用户选择）
      */
-    @Select("SELECT id, voice_code, description, gender, name FROM voice_info WHERE is_enabled = 1 ORDER BY create_time DESC")
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE is_enabled = 1 ORDER BY create_time DESC")
     List<VoiceQueryVO> selectEnabledVoices();
     
     /**
      * 根据性别查询启用的音色
      */
-    @Select("SELECT id, voice_code, description, gender, name FROM voice_info WHERE is_enabled = 1 AND gender = #{gender} ORDER BY create_time DESC")
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE is_enabled = 1 AND gender = #{gender} ORDER BY create_time DESC")
     List<VoiceQueryVO> selectEnabledVoicesByGender(@Param("gender") String gender);
+    
+    /**
+     * 根据语言查询启用的音色
+     */
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE is_enabled = 1 AND language = #{language} ORDER BY create_time DESC")
+    List<VoiceQueryVO> selectEnabledVoicesByLanguage(@Param("language") String language);
+    
+    /**
+     * 根据性别和语言查询启用的音色
+     */
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE is_enabled = 1 AND gender = #{gender} AND language = #{language} ORDER BY create_time DESC")
+    List<VoiceQueryVO> selectEnabledVoicesByGenderAndLanguage(@Param("gender") String gender, @Param("language") String language);
     
     /**
      * 根据关键词搜索音色
      */
-    @Select("SELECT id, voice_code, description, gender, name FROM voice_info WHERE is_enabled = 1 AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%')) ORDER BY create_time DESC")
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE is_enabled = 1 AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%')) ORDER BY create_time DESC")
     List<VoiceQueryVO> searchVoices(@Param("keyword") String keyword);
     
     /**
@@ -51,6 +63,6 @@ public interface VoiceMapper extends BaseMapper<VoiceInfo> {
     /**
      * 根据ID查询音色（简化版，用于角色关联）
      */
-    @Select("SELECT id, voice_code, description, gender, name FROM voice_info WHERE id = #{id}")
+    @Select("SELECT id, voice_code, description, gender, name, language FROM voice_info WHERE id = #{id}")
     VoiceQueryVO selectVoiceQueryById(@Param("id") String id);
 }

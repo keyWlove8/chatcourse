@@ -37,14 +37,9 @@ public class VoiceVO {
     private String name;
     
     /**
-     * 模型URL
+     * 语言
      */
-    private String modelUrl;
-    
-    /**
-     * 模型名称
-     */
-    private String modelName;
+    private String language;
     
     /**
      * 创建时间
@@ -61,15 +56,5 @@ public class VoiceVO {
      */
     private Integer isEnabled;
     
-    /**
-     * 性别显示名称
-     */
-    public String getGenderDisplay() {
-        switch (gender) {
-            case "male": return "男声";
-            case "female": return "女声";
-            case "neutral": return "中性";
-            default: return "未知";
-        }
-    }
+
 }

@@ -34,7 +34,5 @@ public interface ChatService {
     // 新增：语音聊天处理
     VoiceChatReplyVO processVoiceMessage(MultipartFile audioFile, String characterId, String memoryId, String knowledgeId);
     
-    // 新增：便捷方法
-    String convertSpeechToText(MultipartFile audioFile);
-    String convertTextToSpeech(String text);
+
 }

@@ -32,17 +32,7 @@ public class VoiceCreateDTO {
     private String name;
     
     /**
-     * 模型URL
+     * 语言 (zh-CN/en-US/ja-JP等)
      */
-    private String modelUrl;
-    
-    /**
-     * 模型名称
-     */
-    private String modelName;
-    
-    /**
-     * API密钥
-     */
-    private String apiKey;
+    private String language;
 }

@@ -105,15 +105,14 @@ CREATE TABLE IF NOT EXISTS voice_info (
     description TEXT COMMENT '声音描述',
     gender VARCHAR(20) NOT NULL COMMENT '声音性别：male/female/neutral',
     name VARCHAR(100) NOT NULL COMMENT '声音名称',
-    model_url VARCHAR(500) COMMENT '模型URL',
-    model_name VARCHAR(100) COMMENT '模型名称',
-    api_key VARCHAR(500) COMMENT 'API密钥',
+    language VARCHAR(20) NOT NULL COMMENT '语言',
     create_time BIGINT NOT NULL COMMENT '创建时间',
     creator_id VARCHAR(100) NOT NULL COMMENT '创建者ID',
     is_enabled TINYINT DEFAULT 1 COMMENT '是否启用：0-禁用，1-启用',
     INDEX idx_voice_code (voice_code),
     INDEX idx_gender (gender),
     INDEX idx_name (name),
+    INDEX idx_language (language),
     INDEX idx_creator_id (creator_id),
     INDEX idx_create_time (create_time),
     INDEX idx_is_enabled (is_enabled)
@@ -132,9 +131,13 @@ INSERT INTO ai_character (id, name, description, personality, background_story, 
     ON DUPLICATE KEY UPDATE name = VALUES(name);
 
 -- 插入默认音色
-INSERT INTO voice_info (id, voice_code, description, gender, name, model_url, model_name, api_key, create_time, creator_id, is_enabled) VALUES
-                                                                                                                                            ('voice_001', 'xiaoyun', '温柔女声，适合日常对话', 'female', '小云', 'https://api.example.com/tts', 'XiaoYun', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
-                                                                                                                                            ('voice_002', 'xiaogang', '沉稳男声，适合专业场景', 'male', '小刚', 'https://api.example.com/tts', 'XiaoGang', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
-                                                                                                                                            ('voice_003', 'xiaoli', '活泼女声，适合轻松话题', 'female', '小丽', 'https://api.example.com/tts', 'XiaoLi', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
-                                                                                                                                            ('voice_004', 'xiaoming', '中性声音，适合正式场合', 'neutral', '小明', 'https://api.example.com/tts', 'XiaoMing', 'your-api-key-here', UNIX_TIMESTAMP() * 1000, 'admin_001', 1)
+INSERT INTO voice_info (id, voice_code, description, gender, name, language, create_time, creator_id, is_enabled) VALUES
+                                                                                                        ('voice_001', 'xiaoyun', '温柔女声，适合日常对话', 'female', '小云', 'zh-CN', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_002', 'xiaogang', '沉稳男声，适合专业场景', 'male', '小刚', 'zh-CN', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_003', 'xiaoli', '活泼女声，适合轻松话题', 'female', '小丽', 'zh-CN', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_004', 'xiaoming', '中性声音，适合正式场合', 'neutral', '小明', 'zh-CN', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_005', 'alice', '温柔英文女声，适合英语学习', 'female', 'Alice', 'en-US', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_006', 'bob', '沉稳英文男声，适合商务场景', 'male', 'Bob', 'en-US', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_007', 'yuki', '温柔日文女声，适合日语学习', 'female', 'Yuki', 'ja-JP', UNIX_TIMESTAMP() * 1000, 'admin_001', 1),
+                                                                                                        ('voice_008', 'takeshi', '沉稳日文男声，适合正式场合', 'male', 'Takeshi', 'ja-JP', UNIX_TIMESTAMP() * 1000, 'admin_001', 1)
     ON DUPLICATE KEY UPDATE name = VALUES(name);

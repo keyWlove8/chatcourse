@@ -134,6 +134,16 @@ public class VoiceServiceImpl implements VoiceService {
     }
     
     @Override
+    public List<VoiceQueryVO> getEnabledVoicesByLanguage(String language) {
+        return voiceMapper.selectEnabledVoicesByLanguage(language);
+    }
+    
+    @Override
+    public List<VoiceQueryVO> getEnabledVoicesByGenderAndLanguage(String gender, String language) {
+        return voiceMapper.selectEnabledVoicesByGenderAndLanguage(gender, language);
+    }
+    
+    @Override
     public List<VoiceQueryVO> searchVoices(String keyword) {
         if (!StringUtils.hasText(keyword)) {
             return getEnabledVoices();

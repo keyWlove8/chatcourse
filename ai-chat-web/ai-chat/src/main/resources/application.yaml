@@ -109,4 +109,13 @@ k8:
     # JWT配置
     # 对称加密密钥（开发环境使用）
     secret-key: k8DefaultSecretKeyForJWTTokenGeneration2025
+  tts:
+    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    model-name: qwen3-tts-flash
+    url: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
+  ars:
+    # 语音识别配置 - 使用阿里云实时语音识别
+    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    model-name: paraformer-realtime-v2
+    url: https://dashscope.aliyuncs.com/api/v1/services/aigc/speech-recognition/generation
 debug: true

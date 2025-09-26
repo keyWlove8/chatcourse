@@ -7,10 +7,7 @@ import com.k8.entity.ChatHistory;
 import com.k8.entity.ContextMessage;
 import com.k8.entity.MultiChatMessage;
 import com.k8.enums.KChatMessageType;
-import com.k8.mapper.ChatDetailMapper;
-import com.k8.mapper.ChatHistoryMapper;
-import com.k8.mapper.ChatMessageMapper;
-import com.k8.mapper.ContextMessageMapper;
+import com.k8.mapper.*;
 import com.k8.metadata.ContentMetadata;
 import com.k8.param.ImageContextPara;
 import com.k8.service.*;
@@ -24,6 +21,7 @@ import jakarta.annotation.Resource;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +42,15 @@ import static com.k8.constants.LocalUtilConstants.IMAGE_URL_KEY;
  * 聊天服务实现类（示例，实际项目需对接AI模型）
  */
 @Service
+@Slf4j
 public class ChatServiceImpl implements ChatService {
 
     private final static String USER_CHAT_MESSAGE_TYPE = "user";
     private final static String AI_CHAT_MESSAGE_TYPE = "ai";
+
+    @Resource
+    private VoiceService voiceService;
+
 
     @Resource
     private RemoteStaticService remoteStaticService;
@@ -272,14 +275,23 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public VoiceChatReplyVO processVoiceMessage(MultipartFile audioFile, String characterId, String memoryId, String knowledgeId) {
-        // 1. 语音转文本
+        CharacterVO character = characterService.getCharacterById(characterId);
+        if (character == null) throw new RuntimeException("无法找到该角色, 角色Id：" + characterId);
+        String voiceId = character.getVoiceId();
+        VoiceVO voice = voiceService.getVoiceById(voiceId);
+        if (voice == null) throw new RuntimeException("该声音无法找到，voiceId: " + voiceId);
         String transcribedText = speechToTextService.convert(audioFile);
+        String aiReply = null;
+        if (!StringUtils.hasText(transcribedText)){
+            transcribedText = "";
+            aiReply = "您好，说话声音请大声点";
+        }else {
+            // 2. 调用文本处理逻辑（这会自动保存用户消息和AI回复到数据库）
+            aiReply = processMessageWithCharacter(transcribedText, memoryId, knowledgeId, null, characterId);
+        }
 
-        // 2. 调用文本处理逻辑（这会自动保存用户消息和AI回复到数据库）
-        //String aiReply = processMessageWithCharacter(transcribedText, memoryId, knowledgeId, null, characterId);
-        String aiReply = "这是一段测试语音";
         // 3. 文本转语音
-        String audioUrl = textToSpeechService.convertToSpeech(aiReply);
+        String audioUrl = textToSpeechService.convertToSpeech(aiReply, voice);
 
         // 4. 返回包含转录文本、AI回复文本和语音URL的结果
         VoiceChatReplyVO replyVO = new VoiceChatReplyVO();
@@ -332,15 +344,7 @@ public class ChatServiceImpl implements ChatService {
         }
     }
 
-    @Override
-    public String convertSpeechToText(MultipartFile audioFile) {
-        return speechToTextService.convert(audioFile);
-    }
 
-    @Override
-    public String convertTextToSpeech(String text) {
-        return textToSpeechService.convertToSpeech(text);
-    }
 
     @Data
     @AllArgsConstructor

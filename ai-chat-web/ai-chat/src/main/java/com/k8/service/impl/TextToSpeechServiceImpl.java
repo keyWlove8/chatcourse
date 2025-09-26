@@ -1,32 +1,57 @@
 package com.k8.service.impl;
 
-import com.k8.service.RemoteStaticService;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.k8.chat.mcp.voice.TtsClient;
+import com.k8.chat.mcp.voice.properties.TtsProperties;
 import com.k8.service.TextToSpeechService;
+import com.k8.util.JsonUtil;
+import com.k8.vo.VoiceVO;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 文本转语音服务实现
+ *
  * @Author: k8
  * @CreateTime: 2025-09-23
  * @Version: 1.0
  */
 @Service
 public class TextToSpeechServiceImpl implements TextToSpeechService {
+    private TtsClient ttsClient;
 
-    @Resource
-    private RemoteStaticService remoteStaticService;
+    private TtsProperties ttsProperties;
 
-    @Override
-    public String convertToSpeech(String text) {
-        // 1. 将文本转换为语音字节数组
-        byte[] audioData = convertToSpeechBytes(text);
-        
-        // 2. 上传到静态服务获取URL
-        return remoteStaticService.uploadAudio(audioData);
+    public TextToSpeechServiceImpl(TtsProperties ttsProperties) {
+        this.ttsProperties = ttsProperties;
+        this.ttsClient = new TtsClient(ttsProperties);
     }
 
     @Override
+    public String convertToSpeech(String text, VoiceVO voiceVO) {
+        Map<String, Object> bodyMap = new HashMap<>();
+        bodyMap.put("model", ttsProperties.getModelName());
+        Map<String, String> inputMap = new HashMap<>();
+        inputMap.put("text", text);
+        inputMap.put("voice", voiceVO.getVoiceCode());
+        inputMap.put("language_type", voiceVO.getLanguage());
+        bodyMap.put("input", inputMap);
+        String bodyString = JsonUtil.objectToString(bodyMap);
+        String response = ttsClient.convert(bodyString);
+        JsonNode jsonNode = JsonUtil.parse(response);
+        JsonNode output = jsonNode.get("output");
+        if (output == null) throw new RuntimeException("转录失败");
+        JsonNode audio = output.get("audio");
+        if (audio == null) throw new RuntimeException("转录失败");
+        JsonNode urlNode = audio.get("url");
+        if (urlNode == null) throw new RuntimeException("转录失败");
+        return urlNode.asText();
+    }
+
+
     public byte[] convertToSpeechBytes(String text) {
         // TODO: 这里需要集成真实的TTS服务
         // 可以选择以下方案之一：
@@ -35,7 +60,7 @@ public class TextToSpeechServiceImpl implements TextToSpeechService {
         // 3. 腾讯云语音合成API
         // 4. 科大讯飞语音合成API
         // 5. 本地TTS服务（如espeak、festival等）
-        
+
         // 临时返回模拟音频数据（WAV格式）
         return generateMockWavAudio(text);
     }

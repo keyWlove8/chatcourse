@@ -3,6 +3,7 @@ package com.k8.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -38,5 +39,11 @@ public class JsonUtil {
         }
     }
 
-
+    public static JsonNode parse(String json){
+        try {
+            return OBJECT_MAPPER.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

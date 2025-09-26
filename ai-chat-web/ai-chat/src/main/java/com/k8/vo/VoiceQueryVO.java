@@ -37,14 +37,9 @@ public class VoiceQueryVO {
     private String name;
     
     /**
-     * 性别显示名称
+     * 语言
      */
-    public String getGenderDisplay() {
-        switch (gender) {
-            case "male": return "男声";
-            case "female": return "女声";
-            case "neutral": return "中性";
-            default: return "未知";
-        }
-    }
+    private String language;
+    
+
 }

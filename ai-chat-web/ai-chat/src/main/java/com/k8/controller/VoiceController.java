@@ -3,6 +3,7 @@ package com.k8.controller;
 import com.k8.dto.VoiceCreateDTO;
 import com.k8.result.Result;
 import com.k8.service.VoiceService;
+import com.k8.util.AuthUtil;
 import com.k8.vo.VoiceQueryVO;
 import com.k8.vo.VoiceVO;
 import jakarta.annotation.Resource;
@@ -27,9 +28,9 @@ public class VoiceController {
      * 创建音色（管理员功能）
      */
     @PostMapping("/create")
-    public Result<VoiceVO> createVoice(@RequestBody VoiceCreateDTO createDTO, 
-                                      @RequestHeader("userId") String userId) {
+    public Result<VoiceVO> createVoice(@RequestBody VoiceCreateDTO createDTO) {
         try {
+            String userId = AuthUtil.getUserId();
             VoiceVO voiceVO = voiceService.createVoice(createDTO, userId);
             return Result.success(voiceVO);
         } catch (Exception e) {
@@ -122,6 +123,32 @@ public class VoiceController {
     public Result<List<VoiceQueryVO>> getEnabledVoicesByGender(@PathVariable String gender) {
         try {
             List<VoiceQueryVO> voices = voiceService.getEnabledVoicesByGender(gender);
+            return Result.success(voices);
+        } catch (Exception e) {
+            return Result.fail(400, e.getMessage());
+        }
+    }
+    
+    /**
+     * 根据语言查询启用的音色（用户功能）
+     */
+    @GetMapping("/enabled/language/{language}")
+    public Result<List<VoiceQueryVO>> getEnabledVoicesByLanguage(@PathVariable String language) {
+        try {
+            List<VoiceQueryVO> voices = voiceService.getEnabledVoicesByLanguage(language);
+            return Result.success(voices);
+        } catch (Exception e) {
+            return Result.fail(400, e.getMessage());
+        }
+    }
+    
+    /**
+     * 根据性别和语言查询启用的音色（用户功能）
+     */
+    @GetMapping("/enabled/gender/{gender}/language/{language}")
+    public Result<List<VoiceQueryVO>> getEnabledVoicesByGenderAndLanguage(@PathVariable String gender, @PathVariable String language) {
+        try {
+            List<VoiceQueryVO> voices = voiceService.getEnabledVoicesByGenderAndLanguage(gender, language);
             return Result.success(voices);
         } catch (Exception e) {
             return Result.fail(400, e.getMessage());

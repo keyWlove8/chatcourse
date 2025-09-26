@@ -50,22 +50,10 @@ public class VoiceInfo {
     private String name;
     
     /**
-     * 模型URL
+     * 语言 (zh-CN/en-US/ja-JP等)
      */
-    @TableField("model_url")
-    private String modelUrl;
-    
-    /**
-     * 模型名称
-     */
-    @TableField("model_name")
-    private String modelName;
-    
-    /**
-     * API密钥
-     */
-    @TableField("api_key")
-    private String apiKey;
+    @TableField("language")
+    private String language;
     
     /**
      * 创建时间

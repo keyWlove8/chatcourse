@@ -1,5 +1,8 @@
 package com.k8.service;
 
+import com.k8.entity.VoiceInfo;
+import com.k8.vo.VoiceVO;
+
 /**
  * 文本转语音服务接口
  * @Author: k8
@@ -13,12 +16,6 @@ public interface TextToSpeechService {
      * @param text 要转换的文本
      * @return 语音文件的URL
      */
-    String convertToSpeech(String text);
-    
-    /**
-     * 将文本转换为语音字节数组
-     * @param text 要转换的文本
-     * @return 语音字节数组
-     */
-    byte[] convertToSpeechBytes(String text);
+    String convertToSpeech(String text, VoiceVO voiceVO);
+
 }

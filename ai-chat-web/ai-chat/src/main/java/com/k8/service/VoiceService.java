@@ -55,6 +55,16 @@ public interface VoiceService {
     List<VoiceQueryVO> getEnabledVoicesByGender(String gender);
     
     /**
+     * 根据语言查询启用的音色（用户功能）
+     */
+    List<VoiceQueryVO> getEnabledVoicesByLanguage(String language);
+    
+    /**
+     * 根据性别和语言查询启用的音色（用户功能）
+     */
+    List<VoiceQueryVO> getEnabledVoicesByGenderAndLanguage(String gender, String language);
+    
+    /**
      * 搜索音色（用户功能）
      */
     List<VoiceQueryVO> searchVoices(String keyword);

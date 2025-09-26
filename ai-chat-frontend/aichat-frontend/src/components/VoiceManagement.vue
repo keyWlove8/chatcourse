@@ -20,6 +20,7 @@
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">音色名称</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">声音码</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">性别</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">语言</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">描述</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">状态</th>
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">操作</th>
@@ -36,6 +37,11 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span class="px-2 py-1 text-xs rounded-full" :class="getGenderClass(voice.gender)">
                   {{ voice.genderDisplay }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
+                  {{ voice.languageDisplay }}
                 </span>
               </td>
               <td class="px-6 py-4">
@@ -128,17 +134,18 @@
               </select>
             </div>
 
-            <!-- 模型名称 -->
+            <!-- 语言 -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">模型名称 <span class="text-red-500">*</span></label>
-              <input 
-                v-model="form.modelName"
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">语言 *</label>
+              <input
                 type="text"
+                v-model="form.language"
                 required
                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                placeholder="请输入模型名称"
+                placeholder="请输入语言代码，如：zh-CN, en-US, ja-JP等"
               />
             </div>
+
           </div>
 
           <!-- 描述 -->
@@ -153,29 +160,6 @@
             ></textarea>
           </div>
 
-          <!-- 模型URL -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">模型URL <span class="text-red-500">*</span></label>
-            <input 
-              v-model="form.modelUrl"
-              type="url"
-              required
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="请输入模型URL"
-            />
-          </div>
-
-          <!-- API密钥 -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">API密钥 <span class="text-red-500">*</span></label>
-            <input 
-              v-model="form.apiKey"
-              type="password"
-              required
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              placeholder="请输入API密钥"
-            />
-          </div>
 
           <!-- 错误提示 -->
           <div v-if="error" class="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
@@ -225,9 +209,7 @@ const form = ref({
   voiceCode: '',
   description: '',
   gender: '',
-  modelUrl: '',
-  modelName: '',
-  apiKey: ''
+  language: ''
 })
 
 // 获取性别样式类
@@ -258,9 +240,7 @@ const editVoice = (voice) => {
     voiceCode: voice.voiceCode,
     description: voice.description || '',
     gender: voice.gender,
-    modelUrl: voice.modelUrl || '',
-    modelName: voice.modelName || '',
-    apiKey: voice.apiKey || ''
+    language: voice.language
   }
   showEditModal.value = true
 }
@@ -323,9 +303,7 @@ const closeModal = () => {
     voiceCode: '',
     description: '',
     gender: '',
-    modelUrl: '',
-    modelName: '',
-    apiKey: ''
+    language: ''
   }
 }
 

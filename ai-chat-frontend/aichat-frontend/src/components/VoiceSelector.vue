@@ -110,6 +110,17 @@
                 中性
               </button>
             </div>
+            
+            <!-- 语言筛选 -->
+            <div class="mt-2">
+              <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">语言筛选</label>
+              <input
+                type="text"
+                v-model="selectedLanguage"
+                class="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                placeholder="输入语言代码筛选，如：zh-CN"
+              />
+            </div>
           </div>
 
           <!-- 音色列表 -->
@@ -140,6 +151,9 @@
                     <h3 class="font-semibold text-gray-900 dark:text-gray-100 text-lg">{{ voice.name }}</h3>
                     <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded-full font-medium">
                       {{ voice.genderDisplay }}
+                    </span>
+                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-300 text-xs rounded-full font-medium">
+                      {{ voice.languageDisplay }}
                     </span>
                   </div>
                   <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{{ voice.description }}</p>
@@ -183,6 +197,7 @@ const emit = defineEmits(['voice-selected'])
 const showModal = ref(false)
 const searchKeyword = ref('')
 const selectedGender = ref('')
+const selectedLanguage = ref('')
 const isLoading = ref(false)
 const voices = ref([])
 const selectedVoice = ref(null)
@@ -194,6 +209,11 @@ const filteredVoices = computed(() => {
   // 按性别筛选
   if (selectedGender.value) {
     filtered = filtered.filter(voice => voice.gender === selectedGender.value)
+  }
+  
+  // 按语言筛选
+  if (selectedLanguage.value) {
+    filtered = filtered.filter(voice => voice.language.toLowerCase().includes(selectedLanguage.value.toLowerCase()))
   }
   
   // 按关键词搜索

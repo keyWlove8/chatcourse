@@ -15,7 +15,7 @@ export async function getAuthenticatedImageUrl(imagePath) {
   try {
     if (!imagePath) return imagePath
     
-    // 如果已经是完整URL，直接返回
+    // 如果已经是完整URL，直接返回（不添加token，不拼接proxyUrl）
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath
     }
@@ -49,7 +49,7 @@ export async function getAuthenticatedAudioUrl(audioPath) {
   try {
     if (!audioPath) return audioPath
     
-    // 如果已经是完整URL，直接返回
+    // 如果已经是完整URL，直接返回（不添加token，不拼接proxyUrl）
     if (audioPath.startsWith('http://') || audioPath.startsWith('https://')) {
       return audioPath
     }

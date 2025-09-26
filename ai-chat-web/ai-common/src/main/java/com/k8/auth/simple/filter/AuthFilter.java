@@ -1,7 +1,7 @@
-package com.k8.auth.simple.filter;
+package com.k8.simple.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.k8.auth.simple.annotation.Auth;
+import com.k8.simple.annotation.Auth;
 import com.k8.cache.TokenCache;
 import com.k8.exception.BusinessException;
 import com.k8.util.JwtUtil;

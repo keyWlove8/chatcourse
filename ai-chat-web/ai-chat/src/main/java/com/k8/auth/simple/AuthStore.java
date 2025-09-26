@@ -1,4 +1,4 @@
-package com.k8.auth.simple;
+package simple;
 
 import com.k8.entity.UserInfo;
 

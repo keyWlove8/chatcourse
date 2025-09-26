@@ -54,9 +54,10 @@ export function convertMessageImageUrls(contents) {
   
   return contents.map(content => {
     if (content.type === 'image' && content.value) {
+      // 保持原始路径，让MessageContent组件处理认证
       return {
         ...content,
-        value: convertImageUrl(content.value)
+        value: content.value // 不转换，保持原始路径
       };
     }
     return content;

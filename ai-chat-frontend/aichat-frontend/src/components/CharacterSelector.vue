@@ -73,7 +73,7 @@
                 <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                   <img
                     v-if="character.avatarUrl"
-                    :src="convertImageUrl(character.avatarUrl)"
+                    :src="getCachedAvatarUrl(character.avatarUrl)"
                     :alt="character.name"
                     class="w-12 h-12 rounded-full object-cover"
                   />
@@ -132,14 +132,16 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useCharacterStore } from '@/store/character'
 import { convertImageUrl } from '@/utils/imageUrl'
+import { getAuthenticatedImageUrl } from '@/utils/authenticatedResource'
 
 const characterStore = useCharacterStore()
 
 const showSelector = ref(false)
 const searchKeyword = ref('')
+const authenticatedAvatars = ref(new Map()) // 缓存认证头像URL
 
 // 搜索防抖
 let searchTimeout = null
@@ -170,6 +172,47 @@ const loadMore = () => {
   characterStore.loadCharacterList()
 }
 
+// 获取缓存的头像URL（同步）
+const getCachedAvatarUrl = (avatarUrl) => {
+  if (!avatarUrl) return ''
+  
+  // 如果已经缓存了，直接返回
+  if (authenticatedAvatars.value.has(avatarUrl)) {
+    return authenticatedAvatars.value.get(avatarUrl)
+  }
+  
+  // 如果还没缓存，先返回降级URL，同时异步加载认证URL
+  const fallbackUrl = convertImageUrl(avatarUrl)
+  authenticatedAvatars.value.set(avatarUrl, fallbackUrl)
+  
+  // 异步加载认证URL
+  loadAuthenticatedAvatarUrl(avatarUrl)
+  
+  return fallbackUrl
+}
+
+// 异步加载认证头像URL
+const loadAuthenticatedAvatarUrl = async (avatarUrl) => {
+  try {
+    const authenticatedUrl = await getAuthenticatedImageUrl(avatarUrl)
+    authenticatedAvatars.value.set(avatarUrl, authenticatedUrl)
+  } catch (error) {
+    console.error('获取认证头像失败:', error)
+    // 保持降级URL
+  }
+}
+
+// 预加载所有角色头像
+const preloadCharacterAvatars = async () => {
+  if (characterStore.characterList.length > 0) {
+    const promises = characterStore.characterList
+      .filter(character => character.avatarUrl)
+      .map(character => loadAuthenticatedAvatarUrl(character.avatarUrl))
+    
+    await Promise.all(promises)
+  }
+}
+
 // 监听搜索关键词变化
 watch(searchKeyword, (newKeyword) => {
   if (newKeyword === '') {
@@ -177,6 +220,10 @@ watch(searchKeyword, (newKeyword) => {
   }
 })
 
+// 监听角色列表变化，预加载头像
+watch(() => characterStore.characterList, () => {
+  preloadCharacterAvatars()
+}, { immediate: true })
 
 // 获取性别标签
 const getGenderLabel = (gender) => {

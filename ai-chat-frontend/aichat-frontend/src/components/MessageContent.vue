@@ -15,7 +15,7 @@
       <div v-else-if="content.type === 'image'" class="mt-3">
         <div class="relative group">
           <img
-            :src="convertImageUrl(content.value)"
+            :src="authenticatedImageUrl"
             :alt="getImageAlt(content)"
             class="w-40 h-40 object-cover rounded-xl cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-large border-2 border-white/20 dark:border-neutral-600/30"
             @click="previewImage(content)"
@@ -84,7 +84,7 @@
             <span class="text-sm font-medium text-purple-700 dark:text-purple-300">音频文件</span>
           </div>
           <audio controls class="w-full">
-            <source :src="convertAudioUrl(content.value)" :type="content.mimeType || 'audio/mpeg'">
+            <source :src="authenticatedAudioUrl" :type="content.mimeType || 'audio/mpeg'">
             您的浏览器不支持音频播放
           </audio>
         </div>
@@ -100,7 +100,7 @@
             <span class="text-sm font-medium text-green-700 dark:text-green-300">视频文件</span>
           </div>
           <video controls class="w-full max-w-md rounded-lg">
-            <source :src="content.value" :type="content.mimeType || 'video/mp4'">
+            <source :src="authenticatedVideoUrl" :type="content.mimeType || 'video/mp4'">
             您的浏览器不支持视频播放
           </video>
         </div>
@@ -128,6 +128,7 @@
 <script>
 import { convertImageUrl } from '../utils/imageUrl'
 import { convertAudioUrl } from '../utils/audioUrl'
+import { getAuthenticatedAudioUrl, getAuthenticatedImageUrl } from '../utils/authenticatedResource'
 
 export default {
   name: 'MessageContent',
@@ -138,10 +139,57 @@ export default {
       default: () => []
     }
   },
+  data() {
+    return {
+      authenticatedAudioUrl: '',
+      authenticatedImageUrl: '',
+      authenticatedVideoUrl: ''
+    }
+  },
+  async mounted() {
+    // 预加载音频资源
+    await this.loadAuthenticatedResources()
+  },
   methods: {
     // 将导入的函数暴露给模板使用
     convertImageUrl,
     convertAudioUrl,
+    
+    // 加载带认证的资源
+    async loadAuthenticatedResources() {
+      // 加载音频资源
+      const audioContent = this.contents.find(content => content.type === 'audio')
+      if (audioContent && audioContent.value) {
+        try {
+          this.authenticatedAudioUrl = await getAuthenticatedAudioUrl(audioContent.value)
+        } catch (error) {
+          console.error('加载认证音频失败:', error)
+          this.authenticatedAudioUrl = convertAudioUrl(audioContent.value)
+        }
+      }
+      
+      // 加载图片资源
+      const imageContent = this.contents.find(content => content.type === 'image')
+      if (imageContent && imageContent.value) {
+        try {
+          this.authenticatedImageUrl = await getAuthenticatedImageUrl(imageContent.value)
+        } catch (error) {
+          console.error('加载认证图片失败:', error)
+          this.authenticatedImageUrl = convertImageUrl(imageContent.value)
+        }
+      }
+      
+      // 加载视频资源
+      const videoContent = this.contents.find(content => content.type === 'video')
+      if (videoContent && videoContent.value) {
+        try {
+          this.authenticatedVideoUrl = await getAuthenticatedImageUrl(videoContent.value) // 复用图片方法
+        } catch (error) {
+          console.error('加载认证视频失败:', error)
+          this.authenticatedVideoUrl = videoContent.value
+        }
+      }
+    },
     // 获取图片的alt属性
     getImageAlt(content) {
       if (content.value) {
@@ -163,10 +211,17 @@ export default {
     },
     
     // 图片预览
-    previewImage(content) {
+    async previewImage(content) {
       if (content.value) {
-        // 创建模态框预览
-        this.createImageModal(convertImageUrl(content.value))
+        try {
+          // 使用认证URL创建模态框预览
+          const authenticatedUrl = await getAuthenticatedImageUrl(content.value)
+          this.createImageModal(authenticatedUrl)
+        } catch (error) {
+          console.error('获取认证图片预览失败:', error)
+          // 降级到原始URL
+          this.createImageModal(convertImageUrl(content.value))
+        }
       }
     },
     

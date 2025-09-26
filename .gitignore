@@ -24,3 +24,6 @@ node_modules/
 target/
 build/
 dist/
+
+# Static files directory
+ai-chat-web/static-files/

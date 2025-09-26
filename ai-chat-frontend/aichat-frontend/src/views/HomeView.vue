@@ -22,22 +22,30 @@
           <!-- 角色管理按钮 -->
           <button 
             @click="showCharacterManagement = true"
-            class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl font-medium text-sm"
+            class="relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl font-medium text-sm group overflow-hidden"
             title="角色管理"
           >
-            <i class="fa fa-users text-sm"></i>
-            <span class="hidden sm:inline">角色管理</span>
+            <div class="relative z-10 flex items-center gap-2">
+              <i class="fa fa-users text-sm group-hover:scale-110 transition-transform duration-200"></i>
+              <span class="hidden sm:inline">角色管理</span>
+            </div>
+            <!-- 背景动画 -->
+            <div class="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
           </button>
           
           <!-- 音色管理按钮 (管理员专用) -->
           <PermissionGuard permission="isAdmin">
             <button 
               @click="showVoiceManagement = true"
-              class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl font-medium text-sm"
+              class="relative flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl font-medium text-sm group overflow-hidden"
               title="音色管理"
             >
-              <i class="fa fa-microphone text-sm"></i>
-              <span class="hidden sm:inline">音色管理</span>
+              <div class="relative z-10 flex items-center gap-2">
+                <i class="fa fa-microphone text-sm group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="hidden sm:inline">音色管理</span>
+              </div>
+              <!-- 背景动画 -->
+              <div class="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
             </button>
           </PermissionGuard>
           
@@ -74,10 +82,10 @@
     </header>
 
                 <!-- 主内容区 -->
-     <main class="container mx-auto px-4 sm:px-6 py-8 flex-1 flex flex-col md:flex-row gap-8 min-h-0">
+     <main class="flex-1 flex flex-col md:flex-row gap-4 min-h-0 p-4">
              <!-- 左侧知识库列表 - 使用侧边栏控制组件 -->
                <SidebarToggle ref="sidebarToggle">
-          <div class="w-full h-full bg-white/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg p-4 sm:p-6 flex flex-col md:w-72 lg:w-80 min-h-0 overflow-hidden">
+          <div class="w-full h-full bg-white/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg p-3 sm:p-4 flex flex-col md:w-64 lg:w-72 min-h-0 overflow-hidden">
           <!-- 切换按钮区域 -->
           <div class="flex gap-2 mb-6">
             <button 
@@ -271,9 +279,9 @@
       </SidebarToggle>
 
                                                 <!-- 右侧聊天区 - 移动端全宽，桌面端自适应 -->
-         <div class="flex-1 flex flex-col w-full min-h-0 h-[calc(100vh-180px)] md:h-[calc(100vh-200px)]">
+         <div class="flex-1 flex flex-col w-full min-h-0 h-[calc(100vh-140px)] md:h-[calc(100vh-160px)]">
          <!-- 当前知识库信息 -->
-         <div v-if="knowledgeStore.selectedId" class="mb-6 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-xl flex-shrink-0 shadow-sm">
+         <div v-if="knowledgeStore.selectedId" class="mb-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-lg flex-shrink-0 shadow-sm">
            <div class="flex items-center justify-between">
              <div class="flex items-center gap-3">
                <i class="fa fa-database text-blue-600 text-lg"></i>
@@ -292,36 +300,9 @@
            </div>
          </div>
 
-         <!-- 当前角色信息 -->
-         <div v-if="characterStore.hasSelectedCharacter" class="mb-6 p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-700 rounded-xl flex-shrink-0 shadow-sm">
-           <div class="flex items-center justify-between">
-             <div class="flex items-center gap-3">
-               <div class="w-8 h-8 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                 <img
-                   v-if="characterStore.currentCharacter?.avatarUrl"
-                   :src="characterStore.currentCharacter.avatarUrl"
-                   :alt="characterStore.currentCharacter.name"
-                   class="w-8 h-8 rounded-full object-cover"
-                 />
-                 <i v-else class="fa fa-user text-white text-sm"></i>
-               </div>
-               <div>
-                 <div class="text-xs text-purple-600 dark:text-purple-400 font-medium">当前角色</div>
-                 <div class="text-sm font-semibold text-purple-900 dark:text-purple-100">{{ characterStore.currentCharacter?.name || '未知' }}</div>
-               </div>
-             </div>
-             <button 
-               @click="characterStore.clearSelectedCharacter"
-               class="p-2 text-purple-500 hover:text-purple-700 hover:bg-purple-100 dark:hover:bg-purple-800/50 rounded transition-colors duration-200"
-               title="取消选择"
-             >
-               <i class="fa fa-times text-sm"></i>
-             </button>
-           </div>
-         </div>
          
                    <!-- 聊天消息列表 - 固定高度，独立滚动 -->
-          <div ref="chatMessagesContainer" class="flex-1 overflow-y-auto min-h-0 p-4 bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 chat-messages-container max-h-[calc(100vh-240px)] md:max-h-[calc(100vh-280px)] relative">
+          <div ref="chatMessagesContainer" class="flex-1 overflow-y-auto min-h-0 p-3 bg-gradient-to-b from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 chat-messages-container relative">
             <!-- 聊天背景图案 -->
             <div class="absolute inset-0 opacity-5 dark:opacity-10">
               <div class="absolute top-10 left-10 w-32 h-32 bg-blue-500 rounded-full blur-3xl"></div>
@@ -389,7 +370,7 @@
                  <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
                    <img
                      v-if="characterStore.currentCharacter?.avatarUrl"
-                     :src="convertImageUrl(characterStore.currentCharacter.avatarUrl)"
+                     :src="currentCharacterAvatarUrl"
                      :alt="characterStore.currentCharacter.name"
                      class="w-8 h-8 rounded-full object-cover"
                    />
@@ -462,14 +443,14 @@
           </div>
 
                           <!-- 消息输入框 -->
-         <div class="mt-4 bg-white/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg p-3 flex-shrink-0">
+         <div class="mt-3 bg-white/95 dark:bg-slate-900/95 rounded-xl border border-slate-200 dark:border-slate-700 shadow-lg p-3 flex-shrink-0">
            <!-- 移动端角色选择器 -->
            <div class="block md:hidden mb-4">
              <CharacterSelector />
            </div>
            
            <!-- 移动端角色选择提示 -->
-           <div v-if="!characterStore.hasSelectedCharacter" class="mb-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+           <div v-if="!characterStore.hasSelectedCharacter" class="mb-3 p-3 bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
              <div class="flex items-center gap-3 text-yellow-700 dark:text-yellow-300">
                <i class="fa fa-exclamation-triangle text-yellow-600 text-lg"></i>
                <div>
@@ -479,7 +460,7 @@
              </div>
            </div>
            <!-- 图片预览区域 -->
-           <div v-if="selectedImages.length > 0" class="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+           <div v-if="selectedImages.length > 0" class="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
              <div class="flex items-center justify-between mb-3">
                <div class="flex items-center gap-2">
                  <i class="fa fa-image text-yellow-600 text-sm"></i>
@@ -505,7 +486,7 @@
            </div>
            
            <!-- 聊天上传错误提示 -->
-           <div v-if="chatStore.uploadError" class="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+           <div v-if="chatStore.uploadError" class="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
              <div class="flex items-center gap-2 text-red-700 dark:text-red-300">
                <i class="fa fa-exclamation-triangle text-red-600 text-sm"></i>
                <span class="text-sm font-medium">{{ chatStore.uploadError }}</span>
@@ -524,29 +505,43 @@
              <div class="flex gap-3">
                <button 
                  @click="triggerImageUpload"
-                 class="flex-1 p-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-medium"
+                 class="relative flex-1 p-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-medium group overflow-hidden"
                  :disabled="chatStore.isSending || isVoiceCalling"
                  title="上传图片"
                >
-                 <i class="fa fa-image mr-2"></i>添加图片
+                 <div class="relative z-10 flex items-center justify-center">
+                   <i class="fa fa-image mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                   <span>添加图片</span>
+                 </div>
+                 <!-- 背景动画 -->
+                 <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                </button>
-               <button 
-                 @click="startVoiceCall"
-                 class="flex-1 p-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-medium"
-                 :disabled="chatStore.isSending || isVoiceCalling || !characterStore.hasSelectedCharacter"
-                 title="语音通话"
-               >
-                 <i class="fa fa-phone mr-2"></i>语音通话
-               </button>
+              <button 
+                @click="startVoiceCall"
+                class="relative flex-1 p-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none font-medium group overflow-hidden"
+                :disabled="chatStore.isSending || isVoiceCalling || !characterStore.hasSelectedCharacter"
+                title="语音通话"
+              >
+                <div class="relative z-10 flex items-center justify-center">
+                  <i class="fa fa-phone mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                  <span>语音通话</span>
+                </div>
+                <!-- 背景动画 -->
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+              </button>
                <button 
                  @click="handleSendMessage"
-                 class="flex-1 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                 class="relative flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group overflow-hidden"
                  :disabled="chatStore.isSending || !inputText.trim() || isVoiceCalling || !characterStore.hasSelectedCharacter"
                >
-                 <i v-if="chatStore.isSending" class="fa fa-spinner fa-spin mr-2"></i>
-                 <i v-else-if="isVoiceCalling" class="fa fa-phone mr-2"></i>
-                 <i v-else class="fa fa-paper-plane mr-2"></i>
-                 {{ isVoiceCalling ? '通话中' : (!characterStore.hasSelectedCharacter ? '请选择角色' : '发送') }}
+                 <div class="relative z-10 flex items-center justify-center">
+                   <i v-if="chatStore.isSending" class="fa fa-spinner fa-spin mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                   <i v-else-if="isVoiceCalling" class="fa fa-phone mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                   <i v-else class="fa fa-paper-plane mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                   <span>{{ isVoiceCalling ? '通话中' : (!characterStore.hasSelectedCharacter ? '请选择角色' : '发送') }}</span>
+                 </div>
+                 <!-- 背景动画 -->
+                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                </button>
              </div>
            </div>
@@ -556,22 +551,31 @@
              <!-- 图片上传按钮 -->
              <button 
                @click="triggerImageUpload"
-               class="p-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex-shrink-0"
+               class="relative p-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex-shrink-0 group"
                :disabled="chatStore.isSending || isVoiceCalling"
                title="上传图片 (支持 JPG, PNG, GIF, WebP，最大 10MB)"
              >
-               <i class="fa fa-image text-lg"></i>
+               <div class="relative z-10">
+                 <i class="fa fa-image text-lg group-hover:scale-110 transition-transform duration-200"></i>
+               </div>
+               <!-- 脉冲动画 -->
+               <div class="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-30 animate-ping"></div>
              </button>
 
-             <!-- 语音通话按钮 -->
-             <button 
-               @click="startVoiceCall"
-               class="p-4 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex-shrink-0"
-               :disabled="chatStore.isSending || isVoiceCalling || !characterStore.hasSelectedCharacter"
-               title="语音通话"
-             >
-               <i class="fa fa-phone text-lg"></i>
-             </button>
+            <!-- 语音通话按钮 -->
+            <button 
+              @click="startVoiceCall"
+              class="relative p-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-full transition-all duration-300 transform hover:scale-110 active:scale-95 shadow-lg hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex-shrink-0 group"
+              :disabled="chatStore.isSending || isVoiceCalling || !characterStore.hasSelectedCharacter"
+              title="语音通话"
+            >
+              <div class="relative z-10">
+                <i class="fa fa-phone text-lg group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+              <!-- 脉冲动画 -->
+              <div class="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-30 animate-ping"></div>
+            </button>
+             
              
              <!-- 隐藏的文件输入框 -->
              <input 
@@ -592,13 +596,17 @@
              ></textarea>
              <button 
                @click="handleSendMessage"
-               class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+               class="relative px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none group overflow-hidden"
                :disabled="chatStore.isSending || !inputText.trim() || isVoiceCalling || !characterStore.hasSelectedCharacter"
              >
-               <i v-if="chatStore.isSending" class="fa fa-spinner fa-spin mr-2"></i>
-               <i v-else-if="isVoiceCalling" class="fa fa-phone mr-2"></i>
-               <i v-else class="fa fa-paper-plane mr-2"></i>
-               {{ isVoiceCalling ? '通话中' : (!characterStore.hasSelectedCharacter ? '请选择角色' : '发送') }}
+               <div class="relative z-10 flex items-center justify-center">
+                 <i v-if="chatStore.isSending" class="fa fa-spinner fa-spin mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                 <i v-else-if="isVoiceCalling" class="fa fa-phone mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                 <i v-else class="fa fa-paper-plane mr-2 group-hover:scale-110 transition-transform duration-200"></i>
+                 <span>{{ isVoiceCalling ? '通话中' : (!characterStore.hasSelectedCharacter ? '请选择角色' : '发送') }}</span>
+               </div>
+               <!-- 背景动画 -->
+               <div class="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
              </button>
            </div>
          </div>
@@ -837,6 +845,8 @@ import VoiceCallModal from '../components/VoiceCallModal.vue'
 import CharacterManagement from '../components/CharacterManagement.vue'
 import VoiceManagement from '../components/VoiceManagement.vue'
 import { useRouter } from 'vue-router'
+import { convertImageUrl } from '../utils/imageUrl'
+import { getAuthenticatedImageUrl } from '../utils/authenticatedResource'
 
 // 状态管理实例
 const authStore = useAuthStore()
@@ -888,6 +898,28 @@ const showVoiceModal = ref(false)
 
 // 角色管理状态
 const showCharacterManagement = ref(false)
+
+// 当前角色认证头像URL
+const currentCharacterAvatarUrl = ref('')
+
+// 加载当前角色认证头像
+const loadCurrentCharacterAvatar = async () => {
+  if (characterStore.currentCharacter?.avatarUrl) {
+    try {
+      currentCharacterAvatarUrl.value = await getAuthenticatedImageUrl(characterStore.currentCharacter.avatarUrl)
+    } catch (error) {
+      console.error('加载当前角色认证头像失败:', error)
+      currentCharacterAvatarUrl.value = convertImageUrl(characterStore.currentCharacter.avatarUrl)
+    }
+  } else {
+    currentCharacterAvatarUrl.value = ''
+  }
+}
+
+// 监听当前角色变化
+watch(() => characterStore.currentCharacter, () => {
+  loadCurrentCharacterAvatar()
+}, { immediate: true })
 
 // 页面初始化
 onMounted(async () => {
@@ -1060,6 +1092,7 @@ const endVoiceCall = () => {
   isVoiceCalling.value = false
   showVoiceModal.value = false
 }
+
 
 // 处理语音消息（从语音弹窗发送过来的消息）
 const handleVoiceMessage = (message) => {

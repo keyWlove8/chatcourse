@@ -45,7 +45,7 @@
           <div class="w-20 h-20 mx-auto mb-4 relative">
             <img
               v-if="character.avatarUrl"
-              :src="convertImageUrl(character.avatarUrl)"
+              :src="getCachedAvatarUrl(character.avatarUrl)"
               :alt="character.name"
               class="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
             />
@@ -221,7 +221,7 @@
             <div class="w-20 h-20 relative">
               <img
                 v-if="form.avatarUrl"
-                :src="convertImageUrl(form.avatarUrl)"
+                :src="getCachedFormAvatarUrl(form.avatarUrl)"
                 :alt="form.name"
                 class="w-20 h-20 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg"
               />
@@ -312,6 +312,7 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import { useCharacterStore } from '@/store/character'
 import { uploadCharacterAvatar } from '@/services/characterService'
 import { convertImageUrl } from '@/utils/imageUrl'
+import { getAuthenticatedImageUrl } from '@/utils/authenticatedResource'
 import VoiceSelector from './VoiceSelector.vue'
 
 const characterStore = useCharacterStore()
@@ -339,6 +340,70 @@ const form = reactive({
 
 // 编辑的角色ID
 const editingCharacterId = ref(null)
+
+// 认证头像URL缓存
+const authenticatedAvatars = ref(new Map())
+const authenticatedFormAvatar = ref('')
+
+// 获取缓存的头像URL（角色列表，同步）
+const getCachedAvatarUrl = (avatarUrl) => {
+  if (!avatarUrl) return ''
+  
+  // 如果已经缓存了，直接返回
+  if (authenticatedAvatars.value.has(avatarUrl)) {
+    return authenticatedAvatars.value.get(avatarUrl)
+  }
+  
+  // 如果还没缓存，先返回降级URL，同时异步加载认证URL
+  const fallbackUrl = convertImageUrl(avatarUrl)
+  authenticatedAvatars.value.set(avatarUrl, fallbackUrl)
+  
+  // 异步加载认证URL
+  loadAuthenticatedAvatarUrl(avatarUrl)
+  
+  return fallbackUrl
+}
+
+// 获取缓存的头像URL（表单，同步）
+const getCachedFormAvatarUrl = (avatarUrl) => {
+  if (!avatarUrl) return ''
+  
+  // 如果已经缓存了，直接返回
+  if (authenticatedFormAvatar.value) {
+    return authenticatedFormAvatar.value
+  }
+  
+  // 如果还没缓存，先返回降级URL，同时异步加载认证URL
+  const fallbackUrl = convertImageUrl(avatarUrl)
+  authenticatedFormAvatar.value = fallbackUrl
+  
+  // 异步加载认证URL
+  loadAuthenticatedFormAvatarUrl(avatarUrl)
+  
+  return fallbackUrl
+}
+
+// 异步加载认证头像URL（角色列表）
+const loadAuthenticatedAvatarUrl = async (avatarUrl) => {
+  try {
+    const authenticatedUrl = await getAuthenticatedImageUrl(avatarUrl)
+    authenticatedAvatars.value.set(avatarUrl, authenticatedUrl)
+  } catch (error) {
+    console.error('获取认证头像失败:', error)
+    // 保持降级URL
+  }
+}
+
+// 异步加载认证头像URL（表单）
+const loadAuthenticatedFormAvatarUrl = async (avatarUrl) => {
+  try {
+    const authenticatedUrl = await getAuthenticatedImageUrl(avatarUrl)
+    authenticatedFormAvatar.value = authenticatedUrl
+  } catch (error) {
+    console.error('获取表单认证头像失败:', error)
+    // 保持降级URL
+  }
+}
 
 // 搜索防抖
 let searchTimeout = null

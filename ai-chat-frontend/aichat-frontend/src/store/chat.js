@@ -466,7 +466,7 @@ export const useChatStore = defineStore('chat', {
                     }
                   })
                   
-                  // 转换消息内容中的图片URL
+                  // 处理消息内容，保持原始图片路径
                   processedMsg.contents = convertMessageImageUrls(processedMsg.contents)
                } else if (msg.content) {
                  // 兼容旧数据格式

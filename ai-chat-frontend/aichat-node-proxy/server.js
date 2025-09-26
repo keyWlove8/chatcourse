@@ -334,10 +334,13 @@ async function proxyToStatic(req, res) {
       data: req.body,
       params: req.query,
       headers: {
+        'Authorization': req.headers.authorization || '',
+        'Content-Type': req.headers['content-type'] || 'application/json',
         'User-Agent': req.headers['user-agent'] || '',
         'Accept': isBinaryFile ? '*/*' : (req.headers['accept'] || '*/*'),
         'Accept-Language': req.headers['accept-language'] || '',
-        'Accept-Encoding': req.headers['accept-encoding'] || ''
+        'Accept-Encoding': req.headers['accept-encoding'] || '',
+        'X-Forwarded-For': req.ip
       },
       validateStatus: function (status) {
         return status < 500;
@@ -422,23 +425,21 @@ async function proxyToStatic(req, res) {
     if (isBinaryFile) {
       res.send(Buffer.from(response.data));
     } else {
-      res.status(response.status).send(response.data);
+      // 统一处理JSON响应，与API服务保持一致
+      res.status(response.status).json(response.data);
     }
     
   } catch (error) {
-    console.error('静态文件代理错误:', error.message);
+    const statusCode = error.response?.status || 500;
+    const errorMessage = error.response?.data?.message || `静态文件代理失败：${error.message}`;
+    
+    console.error(`静态文件代理错误：${statusCode} - ${errorMessage}`);
     console.error('请求路径:', req.originalUrl);
     console.error('错误详情:', error.response?.status, error.response?.data);
     
-    res.status(500).json({ 
-      message: '静态文件服务不可用',
-      error: error.message,
-      details: {
-        status: error.response?.status,
-        data: error.response?.data,
-        staticUrl: STATIC_URL,
-        requestPath: req.originalUrl
-      }
+    res.status(statusCode).json({
+      code: statusCode,
+      message: errorMessage
     });
   }
 }

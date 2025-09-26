@@ -1,14 +1,13 @@
-package com.k8.simple.filter;
+package com.k8.auth.simple.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.k8.simple.annotation.Auth;
+import com.k8.auth.simple.annotation.Auth;
 import com.k8.cache.TokenCache;
 import com.k8.exception.BusinessException;
 import com.k8.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,7 +21,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.k8.constants.Constants.UN_ACCESS_TOKEN;
+import static com.k8.constants.AuthConstants.UN_ACCESS_TOKEN;
 
 /**
  * @Author: k8
@@ -30,10 +29,12 @@ import static com.k8.constants.Constants.UN_ACCESS_TOKEN;
  * @Version: 1.0
  */
 
-@WebFilter(urlPatterns = "/*", filterName = "authFilter")
 public class AuthFilter implements Filter {
-    @Resource
-    TokenCache tokenCache;
+    private TokenCache tokenCache;
+
+    public AuthFilter(TokenCache tokenCache) {
+        this.tokenCache = tokenCache;
+    }
 
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
@@ -62,7 +63,7 @@ public class AuthFilter implements Filter {
                 String accessToken = authorization.replace("Bearer ", "");
                 Claims accessClaims = JwtUtil.parseToken(accessToken);
                 String jti = accessClaims.getId();
-                if (!tokenCache.containsAccessToken(accessClaims.get("userId", String.class), jti)) {
+                if (!tokenCache.containsAccessToken(jti)) {
                     sendErrorResponse(response, UN_ACCESS_TOKEN, "accessToken不存在或已过期");
                     return;
                 }
@@ -105,7 +106,8 @@ public class AuthFilter implements Filter {
         if (handlerMethod != null) {
             return !handlerMethod.hasMethodAnnotation(Auth.class) || handlerMethod.getMethodAnnotation(Auth.class).required();
         }
-        return false;
+        // 如果没有找到HandlerMethod（如通配符路径），默认需要鉴权
+        return true;
     }
 
     private HandlerMethod getHandlerMethod(HttpServletRequest request) throws Exception {

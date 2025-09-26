@@ -102,14 +102,19 @@ public abstract class AbstractAiMethodInterceptor implements MethodInterceptor {
             }
         }
         AiMethodContext aiMethodContext = methodContextMap.get(key);
-        MessageSession messageSession = aiMethodContext.refreshArgs(args);
-        //所以这里必须检测是否返回值是String的
-        Object result = doProcess(aiMethodContext);
-        if (!(result instanceof String)) throw new IllegalStateException("返回值应当为String");
-        messageSession.setAiMessage(new FullMessage(MessageRole.assistant, List.of(new Content("text", result.toString()))));
-        //如果成功执行，则将本次会话记忆化
-        aiMethodContext.memory();
-        return result;
+        try {
+            MessageSession messageSession = aiMethodContext.refreshArgs(args);
+            //所以这里必须检测是否返回值是String的
+            Object result = doProcess(aiMethodContext);
+            if (!(result instanceof String)) throw new IllegalStateException("返回值应当为String");
+            messageSession.setAiMessage(new FullMessage(MessageRole.assistant, List.of(new Content("text", result.toString()))));
+            //如果成功执行，则将本次会话记忆化
+            aiMethodContext.memory();
+            return result;
+        }finally {
+            aiMethodContext.clear();
+        }
+
     }
 
     public abstract Object doProcess(AiMethodContext aiMethodContext);

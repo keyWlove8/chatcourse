@@ -40,9 +40,5 @@ public class Result<T> {
         return new Result<>(500, message, null, System.currentTimeMillis(), false);
     }
 
-    // Token刷新成功响应
-    public static Result<TokenRefreshVO> tokenRefreshSuccess(String accessToken, String refreshToken) {
-        TokenRefreshVO data = new TokenRefreshVO(accessToken, refreshToken, "Bearer", 7200);
-        return new Result<>(200, "Token刷新成功", data, System.currentTimeMillis(), true);
-    }
+
 }

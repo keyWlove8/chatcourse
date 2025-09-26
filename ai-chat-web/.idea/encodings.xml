@@ -4,7 +4,6 @@
     <file url="file://$PROJECT_DIR$/ai-boot/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-boot/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/auth/simple/filter/AuthFilter.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chat/rag/KnowledgeResolver.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chat/rag/impl/EmbeddingMangerImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/chat/rag/pinecone/Langchain4jFilterToPineconeConverter.java" charset="UTF-8" />
@@ -34,6 +33,9 @@
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/vo/KnowledgeVO.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/java/com/k8/vo/UserVO.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-chat/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-common/src/main/java/com/k8/auth/simple/filter/AuthFilter.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ai-common/src/main/resources/path.to" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-static/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/ai-static/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />

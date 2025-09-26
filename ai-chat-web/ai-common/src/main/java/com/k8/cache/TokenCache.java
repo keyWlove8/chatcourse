@@ -1,13 +1,14 @@
 package com.k8.cache;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import jakarta.annotation.Resource;
+import lombok.Data;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.k8.util.JwtUtil.ACCESS_TOKEN_EXPIRE_TIME;
-import static com.k8.util.JwtUtil.REFRESH_TOKEN_EXPIRE_TIME;
+import static com.k8.constants.AuthConstants.ACCESS_TOKEN_EXPIRE_TIME;
+import static com.k8.constants.AuthConstants.REFRESH_TOKEN_EXPIRE_TIME;
 
 /**
  * @Author: k8
@@ -15,34 +16,38 @@ import static com.k8.util.JwtUtil.REFRESH_TOKEN_EXPIRE_TIME;
  * @Version: 1.0
  */
 @Component
+@Data
 public class TokenCache {
-    private static final Cache<String, String> ACCESS_TOKEN_CACHE = CacheBuilder.newBuilder().expireAfterWrite(ACCESS_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS).initialCapacity(200).build();
-    private static final Cache<String, String> REFRESH_TOKEN_CACHE = CacheBuilder.newBuilder().expireAfterWrite(REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS).initialCapacity(200).build();
+    @Resource
+    private RedisTemplate<String,Object> redisTemplate;
+
+    private static String REFRESH_PREFIX = "refresh_token:";
+    private static String ACCESS_PREFIX = "access_token:";
 
     public void putAccessToken(String jti, String userId) {
-        ACCESS_TOKEN_CACHE.put(jti, userId);
+        redisTemplate.opsForValue().set(ACCESS_PREFIX + jti, userId, ACCESS_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
     }
 
     public void removeAccessToken(String jti) {
-        ACCESS_TOKEN_CACHE.invalidate(jti);
+        redisTemplate.delete(ACCESS_PREFIX + jti);
     }
 
-    public boolean containsAccessToken(String userId, String jti) {
-        String cacheUserId = ACCESS_TOKEN_CACHE.getIfPresent(jti);
-        return cacheUserId != null && cacheUserId.equals(userId);
+    public boolean containsAccessToken(String jti) {
+        return redisTemplate.hasKey(ACCESS_PREFIX + jti);
     }
 
     public void putRefreshToken(String jti, String userId) {
-        REFRESH_TOKEN_CACHE.put(jti, userId);
+        redisTemplate.opsForValue().set(REFRESH_PREFIX + jti, userId, REFRESH_TOKEN_EXPIRE_TIME, TimeUnit.MILLISECONDS);
     }
 
-    public void removeRefreshToken(String jti) {
-        REFRESH_TOKEN_CACHE.invalidate(jti);
+
+
+    public void removeRefreshToken(String refreshJti) {
+        redisTemplate.delete(REFRESH_PREFIX + refreshJti);
     }
 
-    public boolean containsRefreshToken(String userId, String jti) {
-        String cacheUserId = REFRESH_TOKEN_CACHE.getIfPresent(jti);
-        return cacheUserId != null && cacheUserId.equals(userId);
+    public boolean containsRefreshToken(String jti) {
+        return redisTemplate.hasKey(REFRESH_PREFIX + jti);
     }
 
     /**

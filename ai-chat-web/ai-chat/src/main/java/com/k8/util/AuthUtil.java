@@ -36,9 +36,8 @@ public class AuthUtil {
         return claims.get("userId", String.class);
     }
 
-    public static String getJti(){
+    public static Claims getClaims(){
         String token = getToken();
-        Claims claims = JwtUtil.parseToken(token);
-        return claims.getId();
+        return JwtUtil.parseToken(token);
     }
 }

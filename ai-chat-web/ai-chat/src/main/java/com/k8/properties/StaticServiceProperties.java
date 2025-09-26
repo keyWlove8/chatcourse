@@ -25,4 +25,10 @@ public class StaticServiceProperties {
      * 例如：/api/image/upload/direct
      */
     private String uploadPath = "/api/image/upload/direct";
+    
+    /**
+     * 音频上传接口路径
+     * 例如：/api/audio/upload/direct
+     */
+    private String audioUploadPath = "/api/audio/upload/direct";
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.k8.param.ImageContextPara;
 import com.k8.properties.StaticServiceProperties;
 import com.k8.service.RemoteStaticService;
+import com.k8.util.AuthUtil;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,10 +93,17 @@ public class RemoteStaticServiceImpl implements RemoteStaticService {
                 .addFormDataPart("category", "chat")
                 .build();
         
-        Request request = new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(uploadUrl)
-                .post(requestBody)
-                .build();
+                .post(requestBody);
+        
+        // 添加Authorization头
+        String token = AuthUtil.getToken();
+        if (token != null) {
+            requestBuilder.addHeader("Authorization", "Bearer " + token);
+        }
+        
+        Request request = requestBuilder.build();
         
         // 发送请求
         try (Response response = httpClient.newCall(request).execute()) {
@@ -146,8 +154,8 @@ public class RemoteStaticServiceImpl implements RemoteStaticService {
      * 上传音频到 ai-static 服务
      */
     private String uploadAudioToStaticServer(byte[] audioData) throws IOException {
-        // 构建上传 URL
-        String uploadUrl = properties.getStaticServerUrl() + properties.getUploadPath();
+        // 构建上传 URL - 使用专门的音频上传接口
+        String uploadUrl = properties.getStaticServerUrl() + properties.getAudioUploadPath();
         
         // 生成音频文件名（使用WAV扩展名，因为实际生成的是WAV格式）
         String fileName = "audio_" + UUID.randomUUID().toString() + ".wav";
@@ -163,10 +171,17 @@ public class RemoteStaticServiceImpl implements RemoteStaticService {
                 .addFormDataPart("category", "audio")
                 .build();
         
-        Request request = new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(uploadUrl)
-                .post(requestBody)
-                .build();
+                .post(requestBody);
+        
+        // 添加Authorization头
+        String token = AuthUtil.getToken();
+        if (token != null) {
+            requestBuilder.addHeader("Authorization", "Bearer " + token);
+        }
+        
+        Request request = requestBuilder.build();
         
         // 发送请求
         try (Response response = httpClient.newCall(request).execute()) {

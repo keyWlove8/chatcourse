@@ -1,7 +1,6 @@
 package com.k8.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.k8.dto.ChatMessageDTO;
 import com.k8.entity.ChatDetail;
 import com.k8.entity.ChatHistory;
@@ -277,8 +276,8 @@ public class ChatServiceImpl implements ChatService {
         String transcribedText = speechToTextService.convert(audioFile);
 
         // 2. 调用文本处理逻辑（这会自动保存用户消息和AI回复到数据库）
-        String aiReply = processMessageWithCharacter(transcribedText, memoryId, knowledgeId, null, characterId);
-
+        //String aiReply = processMessageWithCharacter(transcribedText, memoryId, knowledgeId, null, characterId);
+        String aiReply = "这是一段测试语音";
         // 3. 文本转语音
         String audioUrl = textToSpeechService.convertToSpeech(aiReply);
 

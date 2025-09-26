@@ -10,7 +10,7 @@ public interface Constants {
     int REFRESH_TOKEN_EXPIRE = 402;
     int NO_ACCESS = 403;
 
-    String ADMIN_TYPE = "admin";
+
     String USER_TYPE = "user";
 
     String TEXT_CONTENT_TYPE = "text";

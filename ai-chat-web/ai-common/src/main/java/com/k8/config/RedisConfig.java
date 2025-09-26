@@ -33,20 +33,15 @@ public class RedisConfig {
         // 使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-        
         // 设置key和value的序列化规则
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
-        
+
+        //redisTemplate.setEnableTransactionSupport(true);
         // 设置支持事务
-        redisTemplate.setEnableTransactionSupport(true);
-        
+
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }

@@ -70,24 +70,14 @@ public class ChatController {
             @RequestParam("characterId") String characterId,
             @RequestParam(value = "knowledgeId", required = false) String knowledgeId
     ) {
-        // 1. 语音转文本
-        String transcribedText = chatService.convertSpeechToText(audioFile);
-
-        // 2. 角色聊天处理
-        String aiReply = chatService.processMessageWithCharacter(transcribedText, memoryId, knowledgeId, null, characterId);
-
-        // 3. 文本转语音
-        String audioUrl = chatService.convertTextToSpeech(aiReply);
-
-        // 4. 返回统一响应体
-        UnifiedChatReplyVO replyVO = new UnifiedChatReplyVO();
-        replyVO.setReply(aiReply);
-        replyVO.setAudioUrl(audioUrl);
-        replyVO.setTranscribedText(transcribedText);
-        replyVO.setMemoryId(memoryId);
-        replyVO.setTimestamp(System.currentTimeMillis());
-        replyVO.setMessageType("voice");
-
-        return Result.success(replyVO);
+        VoiceChatReplyVO voiceChatReplyVO = chatService.processVoiceMessage(audioFile, characterId, memoryId, knowledgeId);
+        UnifiedChatReplyVO unifiedChatReplyVO = new UnifiedChatReplyVO();
+        unifiedChatReplyVO.setReply(voiceChatReplyVO.getAiReply());
+        unifiedChatReplyVO.setMessageType("voice");
+        unifiedChatReplyVO.setTimestamp(System.currentTimeMillis());
+        unifiedChatReplyVO.setAudioUrl(voiceChatReplyVO.getAudioUrl());
+        unifiedChatReplyVO.setTranscribedText(voiceChatReplyVO.getTranscribedText());
+        unifiedChatReplyVO.setMemoryId(voiceChatReplyVO.getMemoryId());
+        return Result.success(unifiedChatReplyVO);
     }
 }

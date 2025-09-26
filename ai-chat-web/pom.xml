@@ -20,6 +20,7 @@
         <module>ai-chat</module>
         <module>ai-static</module>
         <module>ai-boot</module>
+        <module>ai-common</module>
     </modules>
 
     <properties>

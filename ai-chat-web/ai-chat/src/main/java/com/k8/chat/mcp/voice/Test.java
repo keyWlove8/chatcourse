@@ -16,7 +16,7 @@ public class Test {
         TtsProperties ttsProperties = new TtsProperties();
         ttsProperties.setModelName("qwen3-tts-flash");
         ttsProperties.setUrl("https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation");
-        ttsProperties.setApiKey("sk-b49bab490292431a8ecfce2c6c2f31b9");
+        ttsProperties.setApiKey("sk-b49ba");
         TtsClient ttsClient = new TtsClient(ttsProperties);
         Map<String, Object> bodyMap = new HashMap<>();
         bodyMap.put("model", ttsProperties.getModelName());

@@ -1,0 +1,44 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 50MB
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info
+    endpoint:
+      health:
+        show-details: always
+  data:
+    redis:
+      # 外部Redis连接（需要外部Redis）
+      host: redis
+      port: 6379
+      database: 0
+      timeout: 10000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1ms
+          max-idle: 8
+          min-idle: 0
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.apache.tomcat: INFO
+    com.k8.file: INFO
+
+k8:
+  static:
+    basePath: /app/static-files
+    # host配置已删除，因为代码中实际未使用
+    # 前端会通过proxyUrl动态拼接完整URL
+
+server:
+  port: 9000
+  servlet:
+    context-path: /
+debug: false

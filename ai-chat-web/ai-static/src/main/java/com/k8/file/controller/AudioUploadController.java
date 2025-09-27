@@ -29,9 +29,6 @@ public class AudioUploadController {
     @Value("${k8.static.basePath}")
     String basePath;
     
-    @Value("${k8.static.host}")
-    String host;
-    
     /**
      * 音频上传接口
      */

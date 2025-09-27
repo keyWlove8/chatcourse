@@ -27,9 +27,6 @@ public class ImageUploadController {
     @Value("${k8.static.basePath}")
     String basePath;
     
-    @Value("${k8.static.host}")
-    String host;
-    
     /**
      * 图片上传接口
      * 简化版本，不需要复杂的策略验证

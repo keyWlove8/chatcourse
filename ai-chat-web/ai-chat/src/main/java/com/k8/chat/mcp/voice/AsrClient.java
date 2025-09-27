@@ -18,6 +18,7 @@ import java.nio.file.Path;
 /**
  * 阿里云实时语音识别客户端
  * 使用官方Java SDK，支持直接传入本地文件路径
+ *
  * @Author: k8
  * @CreateTime: 2025-01-20
  * @Version: 1.0
@@ -32,7 +33,8 @@ public class AsrClient {
 
     /**
      * 将音频数据转换为文本
-     * @param data 音频数据字节数组
+     *
+     * @param data   音频数据字节数组
      * @param format 音频格式 (webm, wav, mp3等)
      * @return 识别出的文本
      */
@@ -49,8 +51,6 @@ public class AsrClient {
             throw new RuntimeException("语音识别失败", e);
         }
     }
-    
-    
 
 
     /**
@@ -73,16 +73,16 @@ public class AsrClient {
         try {
             tempFile = Files.createTempFile("asr_audio_", "." + format);
             Files.write(tempFile, audioData);
-            
+
             File audioFile = tempFile.toFile();
-            
+
             // 直接调用识别接口（同步调用，传入File对象）
             // 根据源码，这个方法返回String，包含JSON格式的识别结果
             String result = recognition.call(param, audioFile);
-            
+
             // 解析JSON结果
             return parseRecognitionResult(result);
-            
+
         } catch (IOException e) {
             throw new RuntimeException("文件操作失败", e);
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class AsrClient {
             }
         }
     }
-    
+
     /**
      * 解析识别结果JSON
      */
@@ -103,11 +103,11 @@ public class AsrClient {
             // 我们需要提取sentences数组中的文本
             JsonNode jsonNode = JsonUtil.parse(jsonResult);
             JsonNode sentences = jsonNode.get("sentences");
-            
+
             if (sentences == null || !sentences.isArray()) {
                 throw new RuntimeException("无效的识别结果格式");
             }
-            
+
             StringBuilder result = new StringBuilder();
             for (com.fasterxml.jackson.databind.JsonNode sentence : sentences) {
                 com.fasterxml.jackson.databind.JsonNode textNode = sentence.get("text");
@@ -121,9 +121,9 @@ public class AsrClient {
                     }
                 }
             }
-            
+
             return result.toString();
-            
+
         } catch (Exception e) {
             throw new RuntimeException("解析识别结果失败: " + e.getMessage(), e);
         }

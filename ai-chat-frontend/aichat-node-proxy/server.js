@@ -19,6 +19,7 @@ const BACKEND_URL = 'http://localhost:8031'; // ai-chat服务
 const STATIC_URL = 'http://localhost:9000';   // ai-static服务
 const FRONTEND_URL = 'http://localhost:3000'; // 前端服务（pnpm serve）
 
+
 // 4. 测试路由
 app.get('/test', (req, res) => {
   res.json({ 
@@ -42,15 +43,15 @@ app.get('/ws', (req, res) => {
 // 7. 代理路由处理
 app.use('/', async (req, res) => {
   try {
-    const path = req.originalUrl;
+    const requestPath = req.originalUrl;
     
     // 如果是API请求，转发到ai-chat服务
-    if (path.startsWith('/api')) {
+    if (requestPath.startsWith('/api')) {
       return await proxyToBackend(req, res);
     }
     
     // 如果是静态文件请求，转发到ai-static服务
-    if (path.startsWith('/download')) {
+    if (requestPath.startsWith('/download')) {
       return await proxyToStatic(req, res);
     }
     
@@ -83,10 +84,28 @@ async function proxyToFrontend(req, res) {
       validateStatus: function (status) {
         return status < 500;
       },
-      timeout: 10000
+      timeout: 10000,
+      responseType: 'arraybuffer'  // 重要：设置为arraybuffer以正确处理二进制文件
     });
     
     console.log(`前端服务响应成功：${response.status} - ${req.originalUrl}`);
+    
+    // 设置响应头
+    if (response.headers['content-type']) {
+      res.set('Content-Type', response.headers['content-type']);
+    }
+    if (response.headers['content-length']) {
+      res.set('Content-Length', response.headers['content-length']);
+    }
+    if (response.headers['last-modified']) {
+      res.set('Last-Modified', response.headers['last-modified']);
+    }
+    if (response.headers['etag']) {
+      res.set('ETag', response.headers['etag']);
+    }
+    if (response.headers['cache-control']) {
+      res.set('Cache-Control', response.headers['cache-control']);
+    }
     
     // 转发响应
     res.status(response.status).send(response.data);
@@ -123,13 +142,36 @@ async function proxyToStatic(req, res) {
       validateStatus: function (status) {
         return status < 500;
       },
-      timeout: 10000
+      timeout: 10000,
+      responseType: 'arraybuffer'  // 重要：设置为arraybuffer以正确处理二进制文件
     });
     
     console.log(`静态文件服务响应成功：${response.status} - ${req.originalUrl}`);
     
-    // 转发响应
-    res.status(response.status).json(response.data);
+    // 转发响应（静态文件直接返回内容）
+    res.status(response.status);
+    
+    // 设置正确的Content-Type
+    if (response.headers['content-type']) {
+      res.set('Content-Type', response.headers['content-type']);
+    }
+    
+    // 设置其他重要头部
+    if (response.headers['content-length']) {
+      res.set('Content-Length', response.headers['content-length']);
+    }
+    if (response.headers['last-modified']) {
+      res.set('Last-Modified', response.headers['last-modified']);
+    }
+    if (response.headers['etag']) {
+      res.set('ETag', response.headers['etag']);
+    }
+    if (response.headers['cache-control']) {
+      res.set('Cache-Control', response.headers['cache-control']);
+    }
+    
+    // 直接发送文件内容
+    res.send(response.data);
     
   } catch (error) {
     const statusCode = error.response?.status || 500;

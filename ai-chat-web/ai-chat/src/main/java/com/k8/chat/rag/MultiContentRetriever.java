@@ -4,10 +4,7 @@ import com.k8.enums.KChatMessageType;
 import com.k8.service.KnowledgeService;
 import com.k8.util.LocalUtil;
 import dev.langchain4j.data.embedding.Embedding;
-import dev.langchain4j.data.message.ChatMessage;
-import dev.langchain4j.data.message.ContentType;
-import dev.langchain4j.data.message.TextContent;
-import dev.langchain4j.data.message.UserMessage;
+import dev.langchain4j.data.message.*;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
@@ -50,11 +47,11 @@ public class MultiContentRetriever implements ContentRetriever {
         if (ragId != null) {
             Embedding embeddedQuery = null;
             for (ChatMessage chatMessage : query.metadata().chatMemory()) {
-                if (KChatMessageType.USER.equals(chatMessage.type())) {
+                if (ChatMessageType.USER.equals(chatMessage.type())) {
                     UserMessage userMessage = (UserMessage) chatMessage;
                     List<dev.langchain4j.data.message.Content> contents = userMessage.contents();
                     for (dev.langchain4j.data.message.Content content : contents) {
-                        if (ContentType.TEXT.equals(content)) {
+                        if (ContentType.TEXT.equals(content.type())) {
                             TextContent textContent = (TextContent) content;
                             embeddedQuery = embeddingManger.embed(textContent.text());
                         }

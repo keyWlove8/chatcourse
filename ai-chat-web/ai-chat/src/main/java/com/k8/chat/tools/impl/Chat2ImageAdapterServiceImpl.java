@@ -29,7 +29,11 @@ public class Chat2ImageAdapterServiceImpl implements Chat2ImageAdapterService {
         if (data != null){
             String base64 = ImageToBase64Converter.doConvert(data.getFileName(), data.getData());
             // 提取文本内容
-            return imageService.chatImage(userMessage, base64, memoryId);
+            try{
+                return imageService.chatImage(userMessage, base64, memoryId);
+            }catch (Throwable e){
+                return e.getMessage();
+            }
         }
         // 如果没有图片，从消息中提取文本内容
         return "本次请求没用到图片";

@@ -259,21 +259,36 @@ let isSilenceCounting = false  // 是否正在静音计时
 let noiseLevel = 0.05  // 环境噪音水平
 let samplesCount = 0   // 采样计数
 let currentAudio = null  // 当前播放的音频对象
+let hasValidVoice = false  // 是否有有效语音
+let firstVoiceTime = 0  // 第一次检测到声音的时间点
+let lastVoiceTime = 0  // 最后一次有声音的时间点
+let isCallEnded = false  // 通话是否已结束
+let isProcessingAudio = false  // 是否正在处理音频
 
 // 语音检测参数
-const VOICE_THRESHOLD = 0.15     // 语音阈值 - 开始录音的阈值（提高以过滤环境噪音）
-const VOICE_RESUME_THRESHOLD = 0.20  // 语音恢复阈值 - 重新开始计时的阈值（更高）
+const VOICE_THRESHOLD = 0.25     // 语音阈值 - 开始录音的阈值（提高以过滤环境噪音）
+const VOICE_RESUME_THRESHOLD = 0.30  // 语音恢复阈值 - 重新开始计时的阈值（更高）
 const SILENCE_DURATION = 2000    // 静音持续时间(ms) - 2秒
 
 // 清理所有资源
 const cleanup = () => {
   console.log('开始清理资源')
   
+  // 设置通话结束标志
+  isCallEnded = true
+  
   // 重置状态
   callState.value = 'idle'
   showSubtitleModal.value = false
   volumeBars.value = new Array(12).fill(0)
   currentAudioUrl.value = ''  // 清理音频URL
+  
+  // 重置语音检测状态
+  hasValidVoice = false
+  firstVoiceTime = 0
+  lastVoiceTime = 0
+  isSilenceCounting = false
+  isProcessingAudio = false
   
   // 停止当前播放的音频
   if (currentAudio) {
@@ -346,6 +361,13 @@ const startCall = async () => {
     console.log('开始通话')
     cleanup()
     
+    // 重置通话状态
+    isCallEnded = false
+    hasValidVoice = false
+    firstVoiceTime = 0
+    lastVoiceTime = 0
+    isProcessingAudio = false
+    
     // 获取麦克风权限
     const stream = await navigator.mediaDevices.getUserMedia({ 
       audio: {
@@ -395,7 +417,47 @@ const startCall = async () => {
     
     mediaRecorder.onstop = async () => {
       console.log('录音停止，处理音频数据')
+      
+      // 检查通话是否已结束
+      if (isCallEnded) {
+        console.log('通话已结束，不处理音频数据')
+        return
+      }
+      
+      // 检查是否正在处理音频
+      if (isProcessingAudio) {
+        console.log('正在处理音频，跳过此次处理')
+        return
+      }
+      
       const audioBlob = new Blob(audioChunks, { type: mimeType })
+      
+      // 检查音频质量 - 如果文件太小，说明没有有效语音
+      if (audioBlob.size < 1000) { // 小于1KB，可能是静音
+        console.log('音频文件太小，可能没有有效语音，跳过处理')
+        // 重置状态并继续录音
+        hasValidVoice = false
+        firstVoiceTime = 0
+        lastVoiceTime = 0
+        callState.value = 'recording'
+        startRecording()
+        return
+      }
+      
+      // 检查是否有有效语音
+      if (!hasValidVoice) {
+        console.log('没有检测到有效语音，跳过处理')
+        // 重置状态并继续录音
+        hasValidVoice = false
+        firstVoiceTime = 0
+        lastVoiceTime = 0
+        callState.value = 'recording'
+        startRecording()
+        return
+      }
+      
+      // 设置处理标志
+      isProcessingAudio = true
       
       // 根据阿里云百炼要求，优先转换为WAV格式
       let processedBlob = audioBlob
@@ -420,10 +482,18 @@ const startCall = async () => {
       }
       
       await handleVoiceMessage(processedBlob, fileExtension)
+      
+      // 处理完音频后重置状态，等待AI回复播放完成
+      hasValidVoice = false
+      firstVoiceTime = 0
+      lastVoiceTime = 0
+      isProcessingAudio = false
+      // 不立即开始录音，等待AI回复播放完成
     }
     
-    // 开始监听
-    callState.value = 'listening'
+    // 立即开始持续录音
+    callState.value = 'recording'
+    startRecording()  // 立即开始录音
     startVoiceDetection()
     
   } catch (error) {
@@ -460,7 +530,12 @@ const startVoiceDetection = () => {
     // 检查状态
     if (callState.value !== 'listening' && callState.value !== 'recording') {
       console.log('语音检测暂停：状态不是监听或录音，当前状态:', callState.value)
-      // 继续检测，等待状态变为listening
+      // 如果是playing状态，完全停止检测，避免影响阈值计算
+      if (callState.value === 'playing') {
+        console.log('AI正在播放，完全停止语音检测')
+        return
+      }
+      // 其他状态继续检测，等待状态变为listening
       animationId = requestAnimationFrame(detectVoice)
       return
     }
@@ -493,12 +568,12 @@ const startVoiceDetection = () => {
     
     if (samplesCount < 100) {
       // 前100次采样使用固定阈值
-      dynamicVoiceThreshold = 0.12  // 高于环境噪音0.09
+      dynamicVoiceThreshold = 0.12  // 降低首次阈值，更容易检测到声音
       dynamicResumeThreshold = 0.15
     } else {
       // 使用动态计算的阈值
-      dynamicVoiceThreshold = Math.max(noiseLevel * 1.3, 0.12)
-      dynamicResumeThreshold = Math.max(noiseLevel * 1.8, 0.15)
+      dynamicVoiceThreshold = Math.max(noiseLevel * 1.3, 0.12)  // 降低倍数和最小值
+      dynamicResumeThreshold = Math.max(noiseLevel * 1.8, 0.15)  // 降低倍数和最小值
     }
     
     // 每100次检测输出一次调试信息
@@ -518,27 +593,53 @@ const startVoiceDetection = () => {
     // 更新音量波浪条
     updateVolumeBars(dataArray)
     
-    // 语音检测逻辑
-    if (callState.value === 'listening') {
+    // 语音检测逻辑 - 持续录音模式
+    if (callState.value === 'recording' && !isProcessingAudio) {
       if (average > dynamicVoiceThreshold) {
-        console.log('检测到语音，开始录音，音量:', average, '阈值:', dynamicVoiceThreshold)
-        startRecording()
-      }
-    } else if (callState.value === 'recording') {
-      if (average <= dynamicVoiceThreshold && !isSilenceCounting) {
-        // 开始静音计时
-        console.log('开始静音计时，音量:', average, '阈值:', dynamicVoiceThreshold)
-        isSilenceCounting = true
-        silenceTimer = setTimeout(() => {
-          console.log('静音超时，停止录音')
-          stopRecording()
-        }, SILENCE_DURATION)
-      } else if (average > dynamicResumeThreshold && isSilenceCounting) {
-        // 只有声音足够大时才清除静音计时器
-        console.log('检测到足够大的声音，清除静音计时器，音量:', average, '阈值:', dynamicResumeThreshold)
-        clearTimeout(silenceTimer)
-        silenceTimer = null
-        isSilenceCounting = false
+        // 检测到声音
+        if (!hasValidVoice) {
+          // 第一次检测到声音
+          hasValidVoice = true
+          firstVoiceTime = Date.now()
+          console.log('第一次检测到声音，开始记录，音量:', average, '阈值:', dynamicVoiceThreshold)
+        }
+        lastVoiceTime = Date.now()  // 更新最后有声音的时间点
+        
+        // 清除静音计时器
+        if (isSilenceCounting) {
+          console.log('检测到声音，清除静音计时器，音量:', average, '阈值:', dynamicVoiceThreshold)
+          clearTimeout(silenceTimer)
+          silenceTimer = null
+          isSilenceCounting = false
+        }
+      } else {
+        // 没有声音，开始静音计时
+        if (!isSilenceCounting && hasValidVoice) {
+          console.log('开始静音计时，音量:', average, '阈值:', dynamicVoiceThreshold)
+          isSilenceCounting = true
+          silenceTimer = setTimeout(() => {
+            // 检查通话是否已结束
+            if (isCallEnded) {
+              console.log('通话已结束，不处理音频')
+              return
+            }
+            
+            // 检查是否正在处理音频
+            if (isProcessingAudio) {
+              console.log('正在处理音频，跳过此次处理')
+              return
+            }
+            
+            // 检查是否有有效语音
+            if (hasValidVoice) {
+              console.log('检测到有效语音，停止录音并发送请求')
+              // 停止录音，触发onstop事件处理
+              if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop()
+              }
+            }
+          }, SILENCE_DURATION)
+        }
       }
     }
     
@@ -593,17 +694,32 @@ const playAiResponse = async (audioUrl) => {
           }
           
           audio.onended = () => {
-            console.log('音频播放结束，恢复监听')
+            console.log('音频播放结束，恢复录音')
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
-            console.log('状态已设置为listening，语音检测应该恢复')
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             resolve()
           }
           
           audio.onerror = (error) => {
             console.error('音频播放失败:', error)
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             reject(error)
           }
           
@@ -611,7 +727,15 @@ const playAiResponse = async (audioUrl) => {
           audio.play().catch(err => {
             console.error('音频播放启动失败:', err)
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             reject(err)
           })
         })
@@ -627,24 +751,47 @@ const playAiResponse = async (audioUrl) => {
           }
           
           audio.onended = () => {
-            console.log('音频播放结束，恢复监听')
+            console.log('音频播放结束，恢复录音')
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
-            console.log('状态已设置为listening，语音检测应该恢复')
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             resolve()
           }
           
           audio.onerror = (error) => {
             console.error('音频播放失败:', error)
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             reject(error)
           }
           
           audio.play().catch(err => {
             console.error('音频播放启动失败:', err)
             currentAudio = null  // 清除引用
-            callState.value = 'listening'
+            callState.value = 'recording'
+            // 重置状态并继续录音
+            hasValidVoice = false
+            firstVoiceTime = 0
+            lastVoiceTime = 0
+            isProcessingAudio = false
+            startRecording()
+            // 重新启动语音检测
+            startVoiceDetection()
             reject(err)
           })
         })

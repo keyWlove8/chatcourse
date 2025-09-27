@@ -1,165 +1,180 @@
-# AI聊天系统部署指南
+# AI聊天系统 (AiChat)
 
-## 📋 项目概述
+一个基于大语言模型的智能聊天系统，支持多角色对话、语音交互、知识库管理和权限控制。
 
-AI聊天系统包含4个服务，打包成1个Docker镜像：
-- **前端服务** (Vue.js + pnpm serve)
-- **后端服务** (Spring Boot AI聊天服务)
-- **静态文件服务** (Spring Boot 文件服务)
-- **代理服务** (Node.js 统一入口)
+## ✨ 核心功能
 
-## 🛠️ 开发环境
+### 🤖 智能对话
+- **多角色支持**: 创建自定义AI角色，每个角色具有独特的性格和对话风格
+- **上下文记忆**: 支持多轮对话，保持对话上下文连贯性
+- **知识库集成**: 基于RAG技术，支持上传文档进行知识问答
+- **多模态交互**: 支持文本、图片、语音多种输入方式
 
-### 本地开发步骤
+### 🎭 角色管理
+- **角色创建**: 自定义角色名称、描述、头像和系统提示词
+- **音色配置**: 为每个角色配置独特的语音合成音色
+- **权限控制**: 支持公开/私有角色，管理员可管理所有角色
 
-1. **启动后端服务** (在IDEA中)
-   - 启动 `AiServer.java` (端口8031)
-   - 启动 `StaticServer.java` (端口9000)
+### 🎤 语音对话功能
+- **语音输入Asr**: 支持实时语音转文字
+- **语音合成Tts**: AI回复可转换为语音播放
+- **多语言支持**: 支持多种语言的语音识别和合成
 
-2. **启动前端服务**
-   ```bash
-   cd ai-chat-frontend/aichat-frontend
-   pnpm serve
-   ```
+### 📚 知识库管理
+- **文档上传**: 支持PDF、Word、TXT等多种格式
+- **智能检索**: 基于向量数据库的语义搜索
+- **权限控制**: 管理员可创建知识库，普通用户可查看使用
 
-3. **启动代理服务**
-   ```bash
-   cd ai-chat-frontend/aichat-node-proxy
-   node server.js
-   ```
+## 🏗️ 系统架构
 
-4. **访问应用**
-   - 前端: http://localhost:3000
-   - 代理入口: http://localhost:8080
-
-## 🚀 生产环境部署
-
-### 方案一：本地构建镜像
-
-1. **构建镜像**
-   ```bash
-   ./build.sh latest
-   ```
-
-2. **配置环境变量**
-   ```bash
-   cp env.example .env
-   # 编辑 .env 文件，设置你的配置
-   ```
-
-3. **启动服务**
-   ```bash
-   docker-compose up -d
-   ```
-
-### 方案二：远程拉取镜像
-
-1. **配置环境变量**
-   ```bash
-   cp env.example .env
-   # 编辑 .env 文件，设置：
-   # IMAGE_NAME=your-registry.com/ai-chat-monolith
-   # TAG=latest
-   # PUBLIC_HOST=yourdomain.com:8080
-   ```
-
-2. **启动服务**
-   ```bash
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
-
-## ⚙️ 环境变量配置
-
-### 必须配置
-```bash
-PUBLIC_HOST=yourdomain.com:8080          # 公网访问地址
-MYSQL_ROOT_PASSWORD=your_password         # 数据库密码
+### 微服务架构
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   前端服务      │    │   代理服务      │    │   后端服务      │
+│   Vue.js        │◄──►│   Node.js       │◄──►│   Spring Boot   │
+│   (端口3000)    │    │   (端口8080)    │    │   (端口8031)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   静态文件服务  │
+                       │   Spring Boot   │
+                       │   (端口9000)    │
+                       └─────────────────┘
 ```
 
-### 可选配置
+### 技术栈
+
+#### 前端技术
+- **Vue 3**: 渐进式JavaScript框架
+- **Pinia**: 状态管理
+- **Vue Router**: 路由管理
+- **Tailwind CSS**: 样式框架
+- **Font Awesome**: 图标库
+- **Axios**: HTTP客户端
+
+#### 后端技术
+- **Spring Boot 3.2**: 主框架
+- **Jwt Token**: 安全认证
+- **MyBatis Plus**: ORM框架
+- **LangChain4j**: AI集成框架
+- **OpenAI API**: 大语言模型
+- **Pinecone**: 向量数据库
+- **Redis**: 缓存和会话存储
+- **MySQL**: 关系型数据库
+
+#### 部署技术
+- **Docker**: 容器化部署
+- **Docker Compose**: 多容器编排
+- **Maven**: 项目构建
+- **pnpm**: 前端包管理
+
+## 🚀 快速开始
+
+### 环境要求
+- Java 21+
+- Node.js 18+
+- Docker & Docker Compose
+- MySQL 8.0+
+- Redis 7+
+
+### 一键启动
 ```bash
-MYSQL_DATABASE=ai_chat                   # 数据库名 (默认: ai_chat)
-MYSQL_USER=ai_user                       # 数据库用户 (默认: ai_user)
-MYSQL_PASSWORD=ai_password               # 数据库密码 (默认: ai_password)
-IMAGE_NAME=ai-chat-monolith              # 镜像名 (默认: ai-chat-monolith)
-TAG=latest                               # 镜像标签 (默认: latest)
+# 克隆项目
+git clone <repository-url>
+cd chat2project
+
+# 配置环境变量
+cp env.example .env
+# 编辑 .env 文件设置配置
+
+# 启动服务
+docker-compose up -d
+
+# 访问应用
+# 应用入口: http://your-server:8080
 ```
 
-## 📁 文件说明
+## 📁 项目结构
 
 ```
 chat2project/
-├── docker-compose.yml          # 本地构建镜像配置
-├── docker-compose.prod.yml     # 远程拉取镜像配置
-├── env.example                 # 环境变量配置示例
-├── build.sh                    # 镜像构建脚本
-├── Dockerfile                  # 镜像构建文件
-└── start-all-services.sh       # 容器内启动脚本
+├── ai-chat-frontend/           # 前端项目
+│   ├── aichat-frontend/        # Vue.js前端应用
+│   └── aichat-node-proxy/      # Node.js代理服务
+├── ai-chat-web/               # 后端项目
+│   ├── ai-chat/               # AI聊天服务
+│   ├── ai-static/             # 静态文件服务
+│   ├── ai-common/             # 公共模块
+│   └── ai-boot/               # 启动器模块
+├── docker-compose.yml         # Docker编排配置
+├── Dockerfile                 # 镜像构建文件
+├── build.sh                   # 构建脚本
+└── start-all-services.sh      # 启动脚本
 ```
+
+## 📚 文档
+
+- **[部署指南](部署指南.md)**: 详细的部署和运行说明
+- **[架构设计](架构设计.md)**: 系统架构和模块设计说明
 
 ## 🔧 常用命令
 
-### 查看服务状态
 ```bash
+# 查看服务状态
 docker-compose ps
-```
 
-### 查看服务日志
-```bash
-docker-compose logs -f
+# 查看服务日志
 docker-compose logs -f ai-chat-app
-```
 
-### 重启服务
-```bash
+# 重启服务
 docker-compose restart
-docker-compose restart ai-chat-app
-```
 
-### 停止服务
-```bash
+# 停止服务
 docker-compose down
 ```
 
-### 进入容器
-```bash
-docker exec -it ai-chat-app /bin/bash
-```
+## 🛡️ 权限系统
+
+### 用户角色
+- **管理员**: 可创建知识库、上传文档、管理角色
+- **普通用户**: 可查看知识库、使用角色进行聊天
+
+### 权限控制
+- 前端组件级权限控制
+- 后端API权限验证
+- 基于JWT的身份认证
 
 ## 🌐 访问地址
 
 部署成功后，通过以下地址访问：
-- **应用入口**: `http://你的公网IP:8080`
-- **API接口**: `http://你的公网IP:8080/api/...`
-- **静态文件**: `http://你的公网IP:8080/static/...`
+- **应用入口**: `http://your-server:8080`
+- **API接口**: `http://your-server:8080/api/...`
+- **静态文件**: `http://your-server:8080/download/...`
 
 ## ⚠️ 注意事项
 
 1. **端口开放**: 确保服务器防火墙开放8080端口
-2. **Java版本**: 确保服务器有Java 17+
-3. **Docker版本**: 确保Docker和Docker Compose已安装
-4. **内存要求**: 建议至少2GB内存
-5. **磁盘空间**: 建议至少5GB可用空间
+2. **Java版本**: 确保服务器有Java 21+
+3. **内存要求**: 建议至少4GB内存
+4. **磁盘空间**: 建议至少10GB可用空间
+5. **网络要求**: 需要访问OpenAI API
 
 ## 🆘 故障排除
-
-### 检查服务状态
-```bash
-# 检查容器状态
-docker-compose ps
-
-# 检查端口监听
-netstat -tlnp | grep 8080
-
-# 检查服务日志
-docker-compose logs ai-chat-app
-```
 
 ### 常见问题
 1. **端口被占用**: 检查8080端口是否被其他服务占用
 2. **数据库连接失败**: 检查MySQL服务是否正常启动
 3. **前端无法访问**: 检查代理服务是否正常运行
-4. **镜像拉取失败**: 检查网络连接和镜像仓库地址
+4. **AI回复异常**: 检查OpenAI API配置和网络连接
+
+## 📄 许可证
+
+本项目采用 MIT 许可证，详情请参阅 [LICENSE](LICENSE) 文件。
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request 来改进项目。
 
 ## 📞 技术支持
 

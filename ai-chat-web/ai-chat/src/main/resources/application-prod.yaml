@@ -13,20 +13,20 @@ langchain4j:
   open-ai:
     streaming-chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab49
       model-name: qwen-plus
-      log-requests: false
-      log-responses: false
+      log-requests: true
+      log-responses: true
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab4902
       model-name: qwen-plus
-      log-requests: false
-      log-responses: false
+      log-requests: true
+      log-responses: true
     embedding-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       model-name: text-embedding-v4
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab4902
 spring:
   servlet:
     multipart:
@@ -34,10 +34,9 @@ spring:
       max-request-size: 20MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # 外部数据库连接（需要外部MySQL）
-    url: jdbc:mysql://mysql:3306/ai_chat?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/ai_chat?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: 1234
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -49,16 +48,24 @@ spring:
       connection-test-query: SELECT 1
   data:
     redis:
-      # 外部Redis连接（需要外部Redis）
-      host: redis
+      # Redis服务器地址
+      host: localhost
+      # Redis服务器端口
       port: 6379
+      # Redis数据库索引（默认为0）
       database: 0
+      # 连接超时时间（毫秒）
       timeout: 10000ms
+      # 连接池配置
       lettuce:
         pool:
+          # 连接池最大连接数
           max-active: 8
+          # 连接池最大阻塞等待时间（使用负值表示没有限制）
           max-wait: -1ms
+          # 连接池中的最大空闲连接
           max-idle: 8
+          # 连接池中的最小空闲连接
           min-idle: 0
 
 server:
@@ -67,15 +74,15 @@ server:
     context-path: /api
 
 pinecone:
-  api-key: pcsk_3X9iSu_RabFDp8mb3nqD3c9rY52SEWMqfzutSbK2C9CgnA4M3KbMMUYpaN7j2a8o11DWgm
+  api-key: pcsk_3X9iSu_R
   name-space: testNameSpace
-  project-id: 6cfd1c38-64c6-46c8-8fd1-eb541e974364
+  project-id: 6cfd1c
 
 # MyBatis-Plus配置
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       id-type: auto
@@ -88,25 +95,27 @@ k8:
   ai:
     base-package: com.k8
     model-key-to-api-key:
-      qwen-vl-plus: sk-b49bab490292431a8ecfce2c6c2f31b9
+      qwen-vl-plus: sk-b49bab490292
   mcp:
     search:
       model-name: baidu_search_v2
-      api-key: bce-v3/ALTAK-ctCacvionwLEhpNZFDupZ/c417857ff7e3a49f829abd45f3b12763e10b03cd
+      api-key: bce-v3/ALTAK-ct
       url: https://qianfan.baidubce.com/v2/ai_search/chat/completions
   static-service:
-    # 同一容器内的静态服务地址
     static-server-url: http://localhost:9000
     upload-path: /api/image/upload/direct
     audio-upload-path: /api/audio/upload/direct
   jwt:
-    secret-key: k8DefaultSecretKeyForJWTTokenGeneration2025
+    # JWT配置
+    # 对称加密密钥（开发环境使用）
+    secret-key: k8DefaultSecretKeyF5
   tts:
-    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    api-key: sk-b49b
     model-name: qwen3-tts-flash
     url: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
   ars:
-    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    # 语音识别配置 - 使用阿里云实时语音识别
+    api-key: sk-b49
     model-name: paraformer-realtime-v2
     url: https://dashscope.aliyuncs.com/api/v1/services/aigc/speech-recognition/generation
-debug: false
+

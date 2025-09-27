@@ -13,20 +13,20 @@ langchain4j:
   open-ai:
     streaming-chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab49
       model-name: qwen-plus
       log-requests: true
       log-responses: true
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab4902
       model-name: qwen-plus
       log-requests: true
       log-responses: true
     embedding-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       model-name: text-embedding-v4
-      api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+      api-key: sk-b49bab4902
 spring:
   servlet:
     multipart:
@@ -36,7 +36,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ai_chat?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: 123456
+    password: 1234
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -74,9 +74,9 @@ server:
     context-path: /api
 
 pinecone:
-  api-key: pcsk_3X9iSu_RabFDp8mb3nqD3c9rY52SEWMqfzutSbK2C9CgnA4M3KbMMUYpaN7j2a8o11DWgm
+  api-key: pcsk_3X9iSu_R
   name-space: testNameSpace
-  project-id: 6cfd1c38-64c6-46c8-8fd1-eb541e974364
+  project-id: 6cfd1c
 
 # MyBatis-Plus配置
 mybatis-plus:
@@ -95,11 +95,11 @@ k8:
   ai:
     base-package: com.k8
     model-key-to-api-key:
-      qwen-vl-plus: sk-b49bab490292431a8ecfce2c6c2f31b9
+      qwen-vl-plus: sk-b49bab490292
   mcp:
     search:
       model-name: baidu_search_v2
-      api-key: bce-v3/ALTAK-ctCacvionwLEhpNZFDupZ/c417857ff7e3a49f829abd45f3b12763e10b03cd
+      api-key: bce-v3/ALTAK-ct
       url: https://qianfan.baidubce.com/v2/ai_search/chat/completions
   static-service:
     static-server-url: http://localhost:9000
@@ -108,14 +108,14 @@ k8:
   jwt:
     # JWT配置
     # 对称加密密钥（开发环境使用）
-    secret-key: k8DefaultSecretKeyForJWTTokenGeneration2025
+    secret-key: k8DefaultSecretKeyF5
   tts:
-    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    api-key: sk-b49b
     model-name: qwen3-tts-flash
     url: https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
   ars:
     # 语音识别配置 - 使用阿里云实时语音识别
-    api-key: sk-b49bab490292431a8ecfce2c6c2f31b9
+    api-key: sk-b49
     model-name: paraformer-realtime-v2
     url: https://dashscope.aliyuncs.com/api/v1/services/aigc/speech-recognition/generation
-debug: true
+

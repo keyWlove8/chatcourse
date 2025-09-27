@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ai-chat-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ai_chat}
+      MYSQL_USER: ${MYSQL_USER:-ai_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ai_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./ai-chat-web/ai-chat/src/main/resources/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ai-chat-network
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ai-chat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-chat-network
+
+  # AI聊天应用（包含所有4个服务）
+  ai-chat-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-chat-app
+    ports:
+      - "8080:8080"  # 只暴露代理端口
+    environment:
+      # 数据库配置
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-ai_chat}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-123456}
+      # Redis配置
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      # 公网地址配置（支持环境变量）
+      - PUBLIC_HOST=${PUBLIC_HOST:-localhost:8080}
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - static_files:/app/static-files
+    networks:
+      - ai-chat-network
+
+volumes:
+  mysql_data:
+  redis_data:
+  static_files:
+
+networks:
+  ai-chat-network:
+    driver: bridge

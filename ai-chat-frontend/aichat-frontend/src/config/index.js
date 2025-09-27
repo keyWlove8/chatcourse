@@ -5,15 +5,12 @@
 
 // 开发环境配置
 const devConfig = {
-  // 代理服务地址（统一入口，处理API和静态文件）
+  // 代理服务地址（开发环境直接连接后端）
   proxyUrl: 'http://localhost:8080'
 }
 
 // 生产环境配置
-const prodConfig = {
-  // 代理服务地址（生产环境需要修改为实际代理地址）
-  proxyUrl: 'http://localhost:8080'
-}
+import prodConfig from './prod.js'
 
 // 根据环境选择配置
 const isDev = process.env.NODE_ENV === 'development'

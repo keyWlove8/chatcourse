@@ -13,6 +13,12 @@ echo "启动AI聊天服务..."
 java --add-opens java.base/java.lang=ALL-UNNAMED \
      --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
      --add-opens java.base/java.util=ALL-UNNAMED \
+     -Dhttp.proxyHost= \
+     -Dhttp.proxyPort= \
+     -Dhttps.proxyHost= \
+     -Dhttps.proxyPort= \
+     -Dhttp.nonProxyHosts="*" \
+     -Dhttps.nonProxyHosts="*" \
      -jar ai-chat.jar --spring.profiles.active=prod &
 AI_CHAT_PID=$!
 
@@ -20,6 +26,12 @@ echo "启动静态文件服务..."
 java --add-opens java.base/java.lang=ALL-UNNAMED \
      --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
      --add-opens java.base/java.util=ALL-UNNAMED \
+     -Dhttp.proxyHost= \
+     -Dhttp.proxyPort= \
+     -Dhttps.proxyHost= \
+     -Dhttps.proxyPort= \
+     -Dhttp.nonProxyHosts="*" \
+     -Dhttps.nonProxyHosts="*" \
      -jar ai-static.jar --spring.profiles.active=prod &
 STATIC_PID=$!
 
@@ -62,6 +74,12 @@ while true; do
         java --add-opens java.base/java.lang=ALL-UNNAMED \
              --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
              --add-opens java.base/java.util=ALL-UNNAMED \
+             -Dhttp.proxyHost= \
+             -Dhttp.proxyPort= \
+             -Dhttps.proxyHost= \
+             -Dhttps.proxyPort= \
+             -Dhttp.nonProxyHosts="*" \
+             -Dhttps.nonProxyHosts="*" \
              -jar ai-chat.jar --spring.profiles.active=prod &
         AI_CHAT_PID=$!
     fi
@@ -71,6 +89,12 @@ while true; do
         java --add-opens java.base/java.lang=ALL-UNNAMED \
              --add-opens java.base/java.lang.reflect=ALL-UNNAMED \
              --add-opens java.base/java.util=ALL-UNNAMED \
+             -Dhttp.proxyHost= \
+             -Dhttp.proxyPort= \
+             -Dhttps.proxyHost= \
+             -Dhttps.proxyPort= \
+             -Dhttp.nonProxyHosts="*" \
+             -Dhttps.nonProxyHosts="*" \
              -jar ai-static.jar --spring.profiles.active=prod &
         STATIC_PID=$!
     fi

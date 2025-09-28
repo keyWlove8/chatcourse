@@ -20,7 +20,7 @@ public class AsrTest {
         try {
             // 1. 创建配置
             AsrProperties asrProperties = new AsrProperties();
-            asrProperties.setApiKey("sk-b49bab490");
+            asrProperties.setApiKey("sk-b4");
             asrProperties.setModelName("paraformer-realtime-v2");
             asrProperties.setUrl("https://dashscope.aliyuncs.com/api/v1/services/aigc/speech-recognition/generation");
 

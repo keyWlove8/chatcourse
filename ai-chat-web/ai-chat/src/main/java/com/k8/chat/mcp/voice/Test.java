@@ -50,7 +50,7 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        try (InputStream in = new URL("http://dashscope-result-sh.oss-cn-shanghai.aliyuncs.com/1d/52/20250926/ffcf3aa4/493a2923-dc82-46b1-9ada-5e5624e5357f.wav?Expires=1758985125&OSSAccessKeyId=LTAI5tKPD3TMqf2Lna1fASuh&Signature=544kKQw7kBl3t3jjXpQhBAm3hqw%3D").openStream();
+        try (InputStream in = new URL("http://dashscope-result").openStream();
              FileOutputStream out = new FileOutputStream("downloaded_audio.wav")) {
             byte[] buffer = new byte[1024];
             int bytesRead;
